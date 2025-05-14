@@ -1,0 +1,33 @@
+.Toastify__toast-container {
+  font-weight: 400;
+
+  .Toastify__toast--default {
+    background: #606060;
+    color: #fff;
+  }
+
+  .Toastify__toast--success {
+    background: #35a73e;
+  }
+
+  .Toastify__close-button{
+    &:hover{
+
+      background-color: transparent;
+    }
+
+  }
+
+
+  .Toastify__toast {
+    //.Toastify__toast-icon {
+    //  margin-inline-end: 15px;
+    //}
+
+    .Toastify__toast-body {
+      white-space: pre-wrap;
+
+    }
+
+  }
+}
