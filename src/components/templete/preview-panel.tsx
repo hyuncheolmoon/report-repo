@@ -10,10 +10,9 @@ import React, {
 import moment from 'moment';
 import styled from '@emotion/styled';
 import { IconButton } from '@mui/material';
-import { Close } from '@mui/icons-material';
 
 import { palette } from '@/constants';
-import { toast, decodeHtml } from '@/utils';
+import { toast } from '@/utils';
 
 interface IPreviewItem {
   uuid: number;
@@ -78,10 +77,6 @@ const PreviewPanel = ({ uuid, title }: PreviewPanelProps) => {
 
 
 
-  const parseNewsContent = useCallback((content: string) => {
-    const html = decodeHtml(content);
-    return html;
-  }, []);
 
 
   /*****************************************************************************
@@ -125,7 +120,6 @@ const PreviewPanel = ({ uuid, title }: PreviewPanelProps) => {
         <PanelHeader>
           {RenderHeader}
           <IconButton onClick={handleCloseSidePanel}>
-            <Close />
           </IconButton>
         </PanelHeader>
         <PanelContents>

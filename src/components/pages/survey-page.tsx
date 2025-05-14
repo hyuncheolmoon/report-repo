@@ -1,23 +1,31 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
-import { ColumnType, RootTable, TableColumn } from '../organisms/table';
-import { palette } from '@/constants';
+
+import { Button } from '@mui/material';
+// import { MdOutlineAdd } from "react-icons/md";
 import { PageContent, PageHeader, PageLayout } from '@/assets/styled';
+import { ColumnType, RootTable, TableColumn } from '@/components/organisms/table';
+
+import { palette } from '@/constants';
 
 
 const SurveyPage = () => {
-
-
-  /*****************************************************************************
-   * INIT
-   *****************************************************************************/
+  const router = useRouter();
 
   /*****************************************************************************
    * ACTION
    *****************************************************************************/
+  const handleMoveCreateSurvey = useCallback(() => {
+    router.push('/survey/create');
+  }, [router]);
 
+
+  /*****************************************************************************
+   * RENDER
+   *****************************************************************************/
   const columns: TableColumn[] = useMemo(
     () => [
       {
@@ -55,13 +63,11 @@ const SurveyPage = () => {
     [],
   );
 
-  /*****************************************************************************
-   * RENDER
-   *****************************************************************************/
-
   return (
     <PageLayout>
-      <PageHeader>설문 관리</PageHeader>
+      <PageHeader>설문 관리
+        <Button variant="contained" color="primary" onClick={handleMoveCreateSurvey}>설문 생성</Button>
+      </PageHeader>
 
       <PageContent>
         <TableContainer>
