@@ -15,23 +15,21 @@ import ListItem, { defaultItem } from './modify-option-item';
 import { palette } from '@/constants';
 import { generateUUID } from '@/utils';
 import { RiDeleteBinLine } from 'react-icons/ri';
+import { useTempleteStore } from '@/stores/use-templete-store';
 
-
-type QuestionBoxProps<T> = {
-    question: Question<T>
-    onChange?: (question: Question<T>) => void;
-    onDelete?: (id: string) => void;
+type QuestionBoxProps = {
+    question: Question
+    // onChange?: (question: Question) => void;
+    // onDelete?: (id: string) => void;
 }
 
 
-const QuestionBox = <T,>({ question, onChange, onDelete }: QuestionBoxProps<T>) => {
-    const [questionData, setQuestionData] = useState<Question<T>>(question);
+const QuestionBox = ({ question }: QuestionBoxProps) => {
 
-    useEffect(() => {
-        onChange?.(questionData);
-    }, [questionData]);
+    const { changeQuestion, deleteQuestion } = useTempleteStore();
 
-    const typeOptions = useMemo(() => {
+
+    const typeList = useMemo(() => {
         return Object.values(QuestionType).map((type) => ({
             label: QuestionTypeLabel[type],
             value: type
@@ -39,10 +37,6 @@ const QuestionBox = <T,>({ question, onChange, onDelete }: QuestionBoxProps<T>) 
     }, []);
 
 
-    const getOptionData: (data: Question<T>) => OptionItem[] = useCallback((data) => {
-        const newOptions = data.options.length > 0 ? data.options : [{ ...defaultItem, id: generateUUID() }];
-        return newOptions;
-    }, []);
 
     //useEffect(() => {
     //    if (questionData.type === QuestionType.TEXTAREA) {
@@ -56,39 +50,43 @@ const QuestionBox = <T,>({ question, onChange, onDelete }: QuestionBoxProps<T>) 
     /*****************************************************************************
      * ACTION
      *****************************************************************************/
+    /**
+     * 옵션 데이터 조회
+     */
+    const getNewOptions: (data: Question) => OptionItem[] = useCallback((data) => {
+        const newOptions = data.options.length > 0 ? data.options : [{ ...defaultItem, id: generateUUID() }];
+        return newOptions;
+    }, []);
 
     const handleChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuestionData({ ...questionData, title: e.target.value });
-    }, [questionData]);
+        const newData = { ...question, title: e.target.value };
+        changeQuestion(newData);
+    }, [question, changeQuestion]);
 
     const handleChangeType = useCallback((event: SelectChangeEvent<unknown>) => {
         const selectedType = event.target.value as QuestionType;
         const isTextType = selectedType === QuestionType.TEXTAREA;
-        const newOptions = isTextType ? [] : getOptionData(questionData);
-        const newData = { ...questionData, type: selectedType, options: newOptions };
-        console.log(newData)
-        setQuestionData({ ...newData } as Question<T>);
-    }, [questionData]);
+        const newOptions = isTextType ? [] : getNewOptions(question);
+        const newData = { ...question, type: selectedType, options: newOptions };
+        changeQuestion(newData);
+    }, [question, getNewOptions, changeQuestion]);
 
     const handleChangeRequired = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('handleChangeRequired', e.target.checked)
-        setQuestionData({ ...questionData, required: e.target.checked });
-    }, [questionData]);
+        const newData = { ...question, required: e.target.checked };
+        changeQuestion(newData);
+    }, [question, changeQuestion]);
 
-    const handleChangeOptions = useCallback((items: OptionItem[]) => {
-        setQuestionData({ ...questionData, options: items });
-    }, [questionData]);
 
     const handleDeleteQuestion = useCallback(() => {
-        onDelete?.(questionData.id);
-    }, [questionData]);
+        deleteQuestion(question.id);
+    }, [question, deleteQuestion]);
 
     /*****************************************************************************
      * RENDER
      *****************************************************************************/
 
     const RenderTypeItem = useMemo(() => {
-        switch (questionData.type) {
+        switch (question.type) {
             case QuestionType.TEXTAREA:
                 return (
                     <QuestionContents>
@@ -102,10 +100,10 @@ const QuestionBox = <T,>({ question, onChange, onDelete }: QuestionBoxProps<T>) 
             case QuestionType.DROPDOWN:
             case QuestionType.CHECKBOX:
                 return (
-                    <ListItem type={questionData.type} options={questionData.options as OptionItem[]} onChange={handleChangeOptions} />
+                    <ListItem question={question} />
                 );
         }
-    }, [questionData]);
+    }, [question]);
 
 
     return (
@@ -113,7 +111,7 @@ const QuestionBox = <T,>({ question, onChange, onDelete }: QuestionBoxProps<T>) 
             <QuestionHeader>
                 <TitleWrapper>
                     <TextInput
-                        value={questionData.title}
+                        value={question.title}
                         placeholder="질문"
                         fullWidth
                         onChange={handleChangeTitle}
@@ -122,10 +120,10 @@ const QuestionBox = <T,>({ question, onChange, onDelete }: QuestionBoxProps<T>) 
 
                 <SelectTypeWrapper>
                     <Select
-                        value={questionData.type}
+                        value={question.type}
                         onChange={handleChangeType}
                         fullWidth
-                        options={typeOptions}
+                        options={typeList}
                     />
                 </SelectTypeWrapper>
             </QuestionHeader>

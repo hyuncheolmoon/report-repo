@@ -11,65 +11,42 @@ import { palette } from '@/constants';
 import { Question, QuestionType } from '@/types';
 
 import { ModifyQuestionBox, ModifyTitleBox } from '@/components/molecules';
+import { useTempleteStore } from '@/stores/use-templete-store';
 import { generateUUID, toast } from '@/utils';
+import useStorageHandler from '@/hooks/use-storage-handler';
 
-const defaultData = {
-  id: '',
-  title: '',
-  type: QuestionType.TEXTAREA,
-  // type: QuestionType.DROPDOWN,
-  options: [],
-  text: '',
-  required: false
-}
 
 const SurveyCreatePage = () => {
   const router = useRouter();
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [questions, setQuestions] = useState<Question<string>[]>([]);
-
+  const { templete, createTemplete, changeSubject, changeDescription, addQuestion } = useTempleteStore();
+  const { postServey } = useStorageHandler();
 
   useEffect(() => {
-    handleAddQuestion();
-  }, []);
+    createTemplete();
+  }, [createTemplete]);
 
   /*****************************************************************************
    * ACTION
    *****************************************************************************/
   const handleCreateSurvey = useCallback(() => {
-    console.log('title', title)
-    console.log('description', description)
-    console.log('questions', questions)
+    console.log('templete', templete)
+    postServey(templete);
+    toast.success('설문이 생성 되었습니다.');
+    router.push('/survey');
 
-  }, [questions]);
+
+  }, [templete]);
 
   const handleAddQuestion = useCallback(() => {
-    const newQuestion = { ...defaultData, id: generateUUID() };
-
-    setQuestions([...questions, newQuestion]);
-  }, [questions]);
+    addQuestion();
+  }, []);
 
 
   const handleChangeHeader = useCallback((title: string, description: string) => {
-    setTitle(title);
-    setDescription(description);
-  }, []);
-
-  const handleChangeQuestion = useCallback((question: Question<string>) => {
-    console.log('question', questions)
-    setQuestions(questions.map(q => q.id === question.id ? question : q));
-  }, [questions]);
-
-  const handleDeleteQuestion = useCallback((id: string) => {
-    console.log('delete question', id)
-    if (questions.length === 1) {
-      toast.error('최소 하나 이상의 질문이 필요합니다.');
-      return;
-    }
-    setQuestions(questions.filter(q => q.id !== id));
-  }, [questions]);
+    changeSubject(title);
+    changeDescription(description);
+  }, [changeSubject, changeDescription]);
 
 
 
@@ -77,11 +54,6 @@ const SurveyCreatePage = () => {
   /*****************************************************************************
    * RENDER
    *****************************************************************************/
-  const RenderQuestions = useMemo(() => {
-    return questions.map((question) => {
-      return <ModifyQuestionBox key={question.id} question={question} onChange={handleChangeQuestion} onDelete={handleDeleteQuestion} />;
-    });
-  }, [questions]);
 
   return (
     <PageLayout>
@@ -92,7 +64,9 @@ const SurveyCreatePage = () => {
       <PageContent>
         <SurveyContainer>
           <ModifyTitleBox onChange={handleChangeHeader} />
-          {RenderQuestions}
+          {templete.questions.map((question) =>
+            <ModifyQuestionBox key={question.id} question={question} />
+          )}
         </SurveyContainer>
       </PageContent>
       <FloatingArea>

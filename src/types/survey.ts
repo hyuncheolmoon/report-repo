@@ -12,12 +12,10 @@ export enum QuestionTypeLabel {
 
 export interface OptionItem {
     id: string;
-    title: string;
-    selected?: boolean;
-    checked?: boolean;
+    content: string;
 }
 
-export interface Question<T extends unknown> {
+export interface Question {
     id: string;
     type: QuestionType;
     title?: string;
