@@ -1,3 +1,5 @@
+'use client';
+
 import { OptionItem, Question, QuestionType } from '@/types';
 import { generateUUID } from '@/utils';
 import { StateCreator } from 'zustand';
@@ -5,8 +7,12 @@ import { create } from 'zustand';
 
 
 
+type BaseDate = {
+  createAt?: string;
+  updateAt?: string;
+}
 
-export type Templete = {
+export type Templete = BaseDate & {
   id: string;
   subject: string;
   description?: string;

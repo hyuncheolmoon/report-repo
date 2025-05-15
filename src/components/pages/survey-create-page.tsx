@@ -8,11 +8,10 @@ import { Button, IconButton } from '@mui/material';
 import { PageContent, PageHeader, PageLayout } from '@/assets/styled';
 
 import { palette } from '@/constants';
-import { Question, QuestionType } from '@/types';
 
 import { ModifyQuestionBox, ModifyTitleBox } from '@/components/molecules';
 import { useTempleteStore } from '@/stores/use-templete-store';
-import { generateUUID, toast } from '@/utils';
+import { toast } from '@/utils';
 import useStorageHandler from '@/hooks/use-storage-handler';
 
 

@@ -15,7 +15,7 @@ const creator: CreatorProps = (() => {
   const createElement = (text: string, color?: string) => {
     return react.createElement(
       'span',
-      { style: { color: color || 'inherit', whiteSpace: 'pre-wrap' } },
+      { style: { color: color || 'inherit', whiteSpace: 'pre-wrap', wordBreak: 'break-all' } },
       text,
     );
   };

@@ -5,18 +5,17 @@ import styled from '@emotion/styled';
 
 import { TableColumn, TableHeader, TableBody } from './index';
 
-type RootTableProps = {
+type RootTableProps<T> = {
   columns: TableColumn[];
-  data: any[];
-  isLoading?: boolean;
+  data: T[];
 };
 
-const RootTable = ({ isLoading = false, columns, data }: RootTableProps) => {
+const RootTable = <T,>({ columns, data }: RootTableProps<T>) => {
   return (
     <TableLayout>
       <Table>
         <TableHeader columns={columns} />
-        <TableBody isLoading={isLoading} columns={columns} data={data} />
+        <TableBody columns={columns} data={data} />
       </Table>
     </TableLayout>
   );

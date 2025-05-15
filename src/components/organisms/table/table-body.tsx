@@ -10,10 +10,10 @@ import creator from './utils/creator';
 type TableBodyProps = {
   columns: TableColumn[];
   data: any[];
-  isLoading?: boolean;
 };
 
-const TableBody = ({ data, columns, isLoading }: TableBodyProps) => {
+const TableBody = ({ data, columns }: TableBodyProps) => {
+  console.log(data)
   const list = useMemo(() => {
     return data.map((item, idx) => {
       return columns.map(column => {
@@ -23,10 +23,7 @@ const TableBody = ({ data, columns, isLoading }: TableBodyProps) => {
         if (column.render) {
           return column.render(item, idx as number);
         }
-        if (column.key) {
-          return creator.getView(column, item[column.key] as string);
-        }
-        return null;
+        return item[column.key as keyof any] || '';
       });
     });
   }, [columns, data]);
@@ -35,7 +32,7 @@ const TableBody = ({ data, columns, isLoading }: TableBodyProps) => {
     return (
       <TBody>
         <Tr>
-          <NoData colSpan={columns.length}>표시할 데이터가 없습니다.</NoData>
+          <NoData colSpan={columns.length}>표시할 정보가 없습니다.</NoData>
         </Tr>
       </TBody>
     );
@@ -43,10 +40,10 @@ const TableBody = ({ data, columns, isLoading }: TableBodyProps) => {
 
   return (
     <TBody>
-      {list.map((items, idx) => (
-        <Tr key={`tr-${idx}`}>
-          {items.map((item, idx) => (
-            <Td key={`td-${idx}`}>{item}</Td>
+      {list.map((items, listIdx) => (
+        <Tr key={`tr-${listIdx}`}>
+          {items.map((item, itemIdx) => (
+            <Td key={`td-${itemIdx}-${item}`}>{item}</Td>
           ))}
         </Tr>
       ))}

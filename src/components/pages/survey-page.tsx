@@ -10,10 +10,13 @@ import { PageContent, PageHeader, PageLayout } from '@/assets/styled';
 import { ColumnType, RootTable, TableColumn } from '@/components/organisms/table';
 
 import { palette } from '@/constants';
+import useStorageHandler from '@/hooks/use-storage-handler';
+import { Templete } from '@/stores/use-templete-store';
 
 
 const SurveyPage = () => {
   const router = useRouter();
+  const { getServeyList } = useStorageHandler();
 
   /*****************************************************************************
    * ACTION
@@ -22,6 +25,8 @@ const SurveyPage = () => {
     router.push('/survey/create');
   }, [router]);
 
+  const list = useMemo(() => getServeyList(), [getServeyList]);
+  console.log(list)
 
   /*****************************************************************************
    * RENDER
@@ -29,14 +34,14 @@ const SurveyPage = () => {
   const columns: TableColumn[] = useMemo(
     () => [
       {
-        id: 'id',
+        key: 'id',
         title: 'ID',
       },
       {
-        id: 'title',
+        key: 'subject',
         title: '제목',
       },
-      { key: 'itemCount', title: '항목 수' },
+      { title: '항목 수', render: (data: Templete) => <span>{data.questions?.length}</span> },
       {
         key: 'createdAt',
         title: '생성일',
@@ -74,7 +79,7 @@ const SurveyPage = () => {
           <TableHeader>
             <TotalCount>총 {10} 개</TotalCount>
           </TableHeader>
-          <RootTable columns={columns} data={[]} />
+          <RootTable columns={columns} data={list} />
         </TableContainer>
       </PageContent>
 

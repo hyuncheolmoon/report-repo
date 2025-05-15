@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo, useCallback } from 'react';
 import { storage } from '@/utils';
 import { Templete } from '@/stores/use-templete-store';
