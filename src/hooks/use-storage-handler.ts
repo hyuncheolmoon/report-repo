@@ -63,11 +63,7 @@ const useStorageHandler = () => {
             postServey,
             deleteServey,
         }),
-        [
-            getServeyList,
-            postServey,
-            deleteServey,
-        ],
+        [getServeyList, postServey, deleteServey],
     );
 };
 

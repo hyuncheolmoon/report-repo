@@ -8,14 +8,15 @@ import { TableColumn, TableHeader, TableBody } from './index';
 type RootTableProps<T> = {
   columns: TableColumn[];
   data: T[];
+  onClick?: (item: T) => void;
 };
 
-const RootTable = <T,>({ columns, data }: RootTableProps<T>) => {
+const RootTable = <T,>({ columns, data, onClick }: RootTableProps<T>) => {
   return (
     <TableLayout>
       <Table>
         <TableHeader columns={columns} />
-        <TableBody columns={columns} data={data} />
+        <TableBody columns={columns} data={data} onClick={onClick} />
       </Table>
     </TableLayout>
   );

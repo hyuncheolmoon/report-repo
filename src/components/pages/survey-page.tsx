@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
 
@@ -13,11 +13,10 @@ import { palette } from '@/constants';
 import useStorageHandler from '@/hooks/use-storage-handler';
 import { Templete } from '@/stores/use-templete-store';
 
-
 const SurveyPage = () => {
   const router = useRouter();
   const { getServeyList } = useStorageHandler();
-
+  const [list, setList] = useState<Templete[]>([]);
   /*****************************************************************************
    * ACTION
    *****************************************************************************/
@@ -25,8 +24,18 @@ const SurveyPage = () => {
     router.push('/survey/create');
   }, [router]);
 
-  const list = useMemo(() => getServeyList(), [getServeyList]);
-  console.log(list)
+  const handleMoveDetailSurvey = useCallback(
+    (templete: Templete) => {
+      router.push(`/survey/modify/${templete.id}`);
+    },
+    [router]
+  );
+
+  useEffect(() => {
+    const list = getServeyList();
+    console.log(list)
+    setList(list);
+  }, [getServeyList]);
 
   /*****************************************************************************
    * RENDER
@@ -45,12 +54,10 @@ const SurveyPage = () => {
       {
         key: 'createdAt',
         title: '생성일',
-        type: ColumnType.DATE,
       },
       {
         key: 'updatedAt',
         title: '수정일',
-        type: ColumnType.DATE,
       },
       {
         title: '수정',
@@ -65,24 +72,26 @@ const SurveyPage = () => {
         },
       },
     ],
-    [],
+    []
   );
 
   return (
     <PageLayout>
-      <PageHeader>설문 관리
-        <Button variant="contained" color="primary" onClick={handleMoveCreateSurvey}>설문 생성</Button>
+      <PageHeader>
+        설문 관리
+        <Button variant="contained" color="primary" onClick={handleMoveCreateSurvey}>
+          새 설문지 작성
+        </Button>
       </PageHeader>
 
       <PageContent>
         <TableContainer>
           <TableHeader>
-            <TotalCount>총 {10} 개</TotalCount>
+            <TotalCount>총 {list.length} 개</TotalCount>
           </TableHeader>
-          <RootTable columns={columns} data={list} />
+          <RootTable columns={columns} data={list} onClick={handleMoveDetailSurvey} />
         </TableContainer>
       </PageContent>
-
     </PageLayout>
   );
 };
@@ -101,7 +110,6 @@ const TableHeader = styled.div`
   position: relative;
 `;
 
-
 const TableContainer = styled.div`
   padding: 12px 0;
   position: relative;
@@ -114,7 +122,4 @@ const TableContainer = styled.div`
   border-radius: 16px;
   background-color: ${palette.white};
   overflow-y: auto;
-
-
-
 `;

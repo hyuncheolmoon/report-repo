@@ -10,48 +10,50 @@ import { Question, QuestionType } from '@/types/survey';
 
 import { palette } from '@/constants';
 
-
-interface QuestionBoxProps<T> {
-    question: Question<T>;
-    onChange: (title: string, type: string, options: string) => void;
+interface QuestionBoxProps {
+  question: Question;
+  onChange: (title: string, type: string, options: string) => void;
 }
 
+const QuestionBox = ({ question, onChange }: QuestionBoxProps) => {
+  const [data, setData] = useState<Question>(question);
 
-const QuestionBox = <T,>({ question, onChange }: QuestionBoxProps<T>) => {
-    const [data, setData] = useState<Question<T>>(question);
+  /*****************************************************************************
+   * ACTION
+   *****************************************************************************/
 
+  const handleChangeTitle = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setData({ ...data, title: e.target.value });
+    },
+    [data]
+  );
 
-    /*****************************************************************************
-     * ACTION
-     *****************************************************************************/
+  const handleChangeType = useCallback(
+    (value: string) => {
+      setData({ ...data, type: value as QuestionType });
+    },
+    [data]
+  );
 
-    const handleChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setData({ ...data, title: e.target.value });
-    }, [data]);
+  /*****************************************************************************
+   * RENDER
+   *****************************************************************************/
 
-    const handleChangeType = useCallback((value: string) => {
-        setData({ ...data, type: value as QuestionType });
-    }, [data]);
-
-    /*****************************************************************************
-     * RENDER
-     *****************************************************************************/
-
-    return (
-        <QuestionContainer>
-            <TextInput
-                value={data.title}
-                placeholder="질문"
-                fullWidth
-                variant="standard"
-                onChange={handleChangeTitle}
-                InputProps={{
-                    disableUnderline: true
-                }}
-            />
-
-        </QuestionContainer>
-    );
+  return (
+    <QuestionContainer>
+      <TextInput
+        value={data.title}
+        placeholder="질문"
+        fullWidth
+        variant="standard"
+        onChange={handleChangeTitle}
+        InputProps={{
+          disableUnderline: true,
+        }}
+      />
+    </QuestionContainer>
+  );
 };
 
 export default QuestionBox;
@@ -60,4 +62,3 @@ const SelectWrapper = styled.div`
   width: 100%;
   margin-top: 12px;
 `;
-

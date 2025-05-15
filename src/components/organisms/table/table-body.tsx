@@ -6,24 +6,23 @@ import { palette } from '@/constants';
 import { ColumnType, TableColumn } from '@/components/organisms/table';
 import creator from './utils/creator';
 
-
-type TableBodyProps = {
+type TableBodyProps<T> = {
   columns: TableColumn[];
-  data: any[];
+  data: Array<T>;
+  onClick?: (item: T) => void;
 };
 
-const TableBody = ({ data, columns }: TableBodyProps) => {
-  console.log(data)
+const TableBody = <T,>({ data, columns, onClick }: TableBodyProps<T>) => {
   const list = useMemo(() => {
     return data.map((item, idx) => {
-      return columns.map(column => {
+      return columns.map((column) => {
         if (column.type === ColumnType.INDEX) {
           return idx + 1;
         }
         if (column.render) {
           return column.render(item, idx as number);
         }
-        return item[column.key as keyof any] || '';
+        return item[column.key as keyof T] || '';
       });
     });
   }, [columns, data]);
@@ -40,10 +39,10 @@ const TableBody = ({ data, columns }: TableBodyProps) => {
 
   return (
     <TBody>
-      {list.map((items, listIdx) => (
-        <Tr key={`tr-${listIdx}`}>
-          {items.map((item, itemIdx) => (
-            <Td key={`td-${itemIdx}-${item}`}>{item}</Td>
+      {list.map((item, listIdx) => (
+        <Tr key={`tr-${listIdx}`} onClick={() => onClick?.(data[listIdx])}>
+          {item.map((value, itemIdx) => (
+            <Td key={`td-${itemIdx}`}>{value}</Td>
           ))}
         </Tr>
       ))}
@@ -63,10 +62,14 @@ const NoData = styled.td`
   border: 1px solid ${palette.gray200};
 `;
 
-const Tr = styled.tr`
+const Tr = styled.tr<{ onClick?: () => void }>`
   display: table-row;
   min-height: 25px;
-
+  ${({ onClick }) =>
+    onClick &&
+    `
+    cursor: pointer;
+  `}
   &:hover {
     background-color: rgba(71, 127, 232, 0.1);
   }
@@ -76,7 +79,8 @@ const Td = styled.td`
   display: table-cell;
   vertical-align: middle;
   text-align: center;
-  padding: 8px 18px;
+  padding: 16px 18px;
+  font-size: 14px;
   color: ${palette.gray900};
   border-style: none;
   border-bottom: 1px dashed ${palette.gray400};

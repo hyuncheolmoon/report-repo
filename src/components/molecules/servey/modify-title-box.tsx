@@ -1,63 +1,67 @@
-
 'use client';
 
-import React, { useCallback, useState } from 'react'; import styled from '@emotion/styled';
+import React, { useCallback, useState } from 'react';
+import styled from '@emotion/styled';
 import { TextInput } from '@/components/atoms';
 import { palette } from '@/constants';
 import { QuestionContainer } from '../../../assets/styled/servey';
 
 type SurveyTitleFieldProps = {
-    defaultTitle?: string;
-    defaultDesc?: string;
-    onChange: (title: string, description: string) => void;
-}
+  defaultTitle?: string;
+  defaultDesc?: string;
+  onChange: (title: string, description: string) => void;
+};
 
 const ModifyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFieldProps) => {
-    const [title, setTitle] = useState<string>(defaultTitle || '');
-    const [description, setDescription] = useState<string>(defaultDesc || '');
+  const [title, setTitle] = useState<string>(defaultTitle || '');
+  const [description, setDescription] = useState<string>(defaultDesc || '');
 
-    /*****************************************************************************
-     * ACTION
-     *****************************************************************************/
+  /*****************************************************************************
+   * ACTION
+   *****************************************************************************/
 
-    const handleChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
-        onChange(e.target.value, description);
-    }, [onChange, description]);
+  const handleChangeTitle = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setTitle(e.target.value);
+      onChange(e.target.value, description);
+    },
+    [onChange, description]
+  );
 
-    const handleChangeDescription = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setDescription(e.target.value);
-        onChange(title, e.target.value);
-    }, [onChange, title]);
+  const handleChangeDescription = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDescription(e.target.value);
+      onChange(title, e.target.value);
+    },
+    [onChange, title]
+  );
 
-    /*****************************************************************************
-     * RENDER
-     *****************************************************************************/
+  /*****************************************************************************
+   * RENDER
+   *****************************************************************************/
 
-    return (
-        <QuestionContainer>
-            <StyledTextInput
-                value={title}
-                placeholder="제목 없는 설문지"
-                fullWidth
-                variant="standard"
-                onChange={handleChangeTitle}
-            />
-            <StyledDescription
-                value={description}
-                placeholder="설문지 설명"
-                fullWidth
-                multiline
-                variant="standard"
-                onChange={handleChangeDescription}
-            />
-
-        </QuestionContainer>
-    );
+  return (
+    <QuestionContainer>
+      <StyledTextInput
+        value={title}
+        placeholder="제목 없는 설문지"
+        fullWidth
+        variant="standard"
+        onChange={handleChangeTitle}
+      />
+      <StyledDescription
+        value={description}
+        placeholder="설문지 설명"
+        fullWidth
+        multiline
+        variant="standard"
+        onChange={handleChangeDescription}
+      />
+    </QuestionContainer>
+  );
 };
 
 export default ModifyTitleField;
-
 
 const StyledTextInput = styled(TextInput)`
   .MuiInputBase-input {

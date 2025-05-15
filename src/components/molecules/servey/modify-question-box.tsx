@@ -11,136 +11,118 @@ import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types/s
 
 import ListItem, { defaultItem } from './modify-option-item';
 
-
 import { palette } from '@/constants';
 import { generateUUID } from '@/utils';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { useTempleteStore } from '@/stores/use-templete-store';
 
 type QuestionBoxProps = {
-    question: Question
-    // onChange?: (question: Question) => void;
-    // onDelete?: (id: string) => void;
-}
-
+  question: Question;
+  // onChange?: (question: Question) => void;
+  // onDelete?: (id: string) => void;
+};
 
 const QuestionBox = ({ question }: QuestionBoxProps) => {
+  const { changeQuestion, deleteQuestion } = useTempleteStore();
 
-    const { changeQuestion, deleteQuestion } = useTempleteStore();
+  const typeList = useMemo(() => {
+    return Object.values(QuestionType).map((type) => ({
+      label: QuestionTypeLabel[type],
+      value: type,
+    }));
+  }, []);
 
+  //useEffect(() => {
+  //    if (questionData.type === QuestionType.TEXTAREA) {
+  //        setQuestionData({ ...questionData, options: [] });
+  //    } else {
+  //        setQuestionData({ ...questionData, options: getOptionData(questionData) });
+  //    }
+  //}, [questionData.type]);
 
-    const typeList = useMemo(() => {
-        return Object.values(QuestionType).map((type) => ({
-            label: QuestionTypeLabel[type],
-            value: type
-        }));
-    }, []);
+  /*****************************************************************************
+   * ACTION
+   *****************************************************************************/
+  /**
+   * 옵션 데이터 조회
+   */
+  const getNewOptions: (data: Question) => OptionItem[] = useCallback((data) => {
+    const newOptions = data.options.length > 0 ? data.options : [{ ...defaultItem, id: generateUUID() }];
+    return newOptions;
+  }, []);
 
+  const handleChangeTitle = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newData = { ...question, title: e.target.value };
+      changeQuestion(newData);
+    },
+    [question, changeQuestion]
+  );
 
+  const handleChangeType = useCallback(
+    (event: SelectChangeEvent<unknown>) => {
+      const selectedType = event.target.value as QuestionType;
+      const isTextType = selectedType === QuestionType.TEXTAREA;
+      const newOptions = isTextType ? [] : getNewOptions(question);
+      const newData = { ...question, type: selectedType, options: newOptions };
+      changeQuestion(newData);
+    },
+    [question, getNewOptions, changeQuestion]
+  );
 
-    //useEffect(() => {
-    //    if (questionData.type === QuestionType.TEXTAREA) {
-    //        setQuestionData({ ...questionData, options: [] });
-    //    } else {
-    //        setQuestionData({ ...questionData, options: getOptionData(questionData) });
-    //    }
-    //}, [questionData.type]);
+  const handleChangeRequired = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newData = { ...question, required: e.target.checked };
+      changeQuestion(newData);
+    },
+    [question, changeQuestion]
+  );
 
+  const handleDeleteQuestion = useCallback(() => {
+    deleteQuestion(question.id);
+  }, [question, deleteQuestion]);
 
-    /*****************************************************************************
-     * ACTION
-     *****************************************************************************/
-    /**
-     * 옵션 데이터 조회
-     */
-    const getNewOptions: (data: Question) => OptionItem[] = useCallback((data) => {
-        const newOptions = data.options.length > 0 ? data.options : [{ ...defaultItem, id: generateUUID() }];
-        return newOptions;
-    }, []);
+  /*****************************************************************************
+   * RENDER
+   *****************************************************************************/
 
-    const handleChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const newData = { ...question, title: e.target.value };
-        changeQuestion(newData);
-    }, [question, changeQuestion]);
+  const RenderTypeItem = useMemo(() => {
+    switch (question.type) {
+      case QuestionType.TEXTAREA:
+        return (
+          <QuestionContents>
+            <TextInput placeholder="입력가능한 텍스트형" fullWidth disabled />
+          </QuestionContents>
+        );
+      case QuestionType.DROPDOWN:
+      case QuestionType.CHECKBOX:
+        return <ListItem question={question} />;
+    }
+  }, [question]);
 
-    const handleChangeType = useCallback((event: SelectChangeEvent<unknown>) => {
-        const selectedType = event.target.value as QuestionType;
-        const isTextType = selectedType === QuestionType.TEXTAREA;
-        const newOptions = isTextType ? [] : getNewOptions(question);
-        const newData = { ...question, type: selectedType, options: newOptions };
-        changeQuestion(newData);
-    }, [question, getNewOptions, changeQuestion]);
+  return (
+    <QuestionContainer>
+      <QuestionHeader>
+        <TitleWrapper>
+          <TextInput value={question.title} placeholder="질문" fullWidth onChange={handleChangeTitle} />
+        </TitleWrapper>
 
-    const handleChangeRequired = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const newData = { ...question, required: e.target.checked };
-        changeQuestion(newData);
-    }, [question, changeQuestion]);
-
-
-    const handleDeleteQuestion = useCallback(() => {
-        deleteQuestion(question.id);
-    }, [question, deleteQuestion]);
-
-    /*****************************************************************************
-     * RENDER
-     *****************************************************************************/
-
-    const RenderTypeItem = useMemo(() => {
-        switch (question.type) {
-            case QuestionType.TEXTAREA:
-                return (
-                    <QuestionContents>
-                        <TextInput
-                            placeholder="입력가능한 텍스트형"
-                            fullWidth
-                            disabled
-                        />
-                    </QuestionContents>
-                );
-            case QuestionType.DROPDOWN:
-            case QuestionType.CHECKBOX:
-                return (
-                    <ListItem question={question} />
-                );
-        }
-    }, [question]);
-
-
-    return (
-        <QuestionContainer>
-            <QuestionHeader>
-                <TitleWrapper>
-                    <TextInput
-                        value={question.title}
-                        placeholder="질문"
-                        fullWidth
-                        onChange={handleChangeTitle}
-                    />
-                </TitleWrapper>
-
-                <SelectTypeWrapper>
-                    <Select
-                        value={question.type}
-                        onChange={handleChangeType}
-                        fullWidth
-                        options={typeList}
-                    />
-                </SelectTypeWrapper>
-            </QuestionHeader>
-            <OptionsWrapper>
-                {RenderTypeItem}
-            </OptionsWrapper>
-            <QuestionFooter>
-                <RequiredBox>
-                    <span>필수</span>
-                    <Switch onChange={handleChangeRequired} />
-                </RequiredBox>
-                <DeleteBtn onClick={handleDeleteQuestion}><RiDeleteBinLine /></DeleteBtn>
-            </QuestionFooter>
-
-
-        </QuestionContainer>
-    );
+        <SelectTypeWrapper>
+          <Select value={question.type} onChange={handleChangeType} fullWidth options={typeList} />
+        </SelectTypeWrapper>
+      </QuestionHeader>
+      <OptionsWrapper>{RenderTypeItem}</OptionsWrapper>
+      <QuestionFooter>
+        <RequiredBox>
+          <span>필수</span>
+          <Switch onChange={handleChangeRequired} />
+        </RequiredBox>
+        <DeleteBtn onClick={handleDeleteQuestion}>
+          <RiDeleteBinLine />
+        </DeleteBtn>
+      </QuestionFooter>
+    </QuestionContainer>
+  );
 };
 
 export default QuestionBox;
@@ -151,7 +133,6 @@ const OptionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-
 `;
 
 const QuestionFooter = styled.div`
@@ -172,10 +153,8 @@ const DeleteBtn = styled(Button)`
 
 const TitleWrapper = styled.div`
   flex: 1 1 auto;
-
 `;
 const SelectTypeWrapper = styled.div`
   flex-grow: 0;
   width: 200px;
 `;
-

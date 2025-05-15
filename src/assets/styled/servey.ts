@@ -8,7 +8,6 @@ export const QuestionContainer = styled.div`
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 `;
 
-
 export const QuestionHeader = styled.div`
   display: flex;
   gap: 12px;
@@ -16,10 +15,8 @@ export const QuestionHeader = styled.div`
   justify-content: space-between;
 `;
 
-
 export const QuestionContents = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
 `;
-

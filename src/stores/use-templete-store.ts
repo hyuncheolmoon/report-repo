@@ -8,8 +8,8 @@ import { create } from 'zustand';
 
 
 type BaseDate = {
-  createAt?: string;
-  updateAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type Templete = BaseDate & {
@@ -19,7 +19,7 @@ export type Templete = BaseDate & {
   questions: Question[];
 }
 
-const defaultQuestion = {
+ const defaultQuestion = {
   id: '',
   title: '',
   type: QuestionType.TEXTAREA,
