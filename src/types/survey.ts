@@ -10,12 +10,18 @@ export enum QuestionTypeLabel {
     CHECKBOX = '체크박스',
 }
 
+export interface OptionItem {
+    id: string;
+    title: string;
+    selected?: boolean;
+    checked?: boolean;
+}
 
 export interface Question<T extends unknown> {
     id: string;
     type: QuestionType;
     title?: string;
     text?: string;
-    options: T[];
+    options: OptionItem[];
     required: boolean;
 }

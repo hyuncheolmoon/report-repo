@@ -6,7 +6,7 @@ import { TextInput } from '@/components/atoms';
 import { palette } from '@/constants';
 import { QuestionContainer } from '../../../assets/styled/servey';
 
-interface SurveyTitleFieldProps {
+type SurveyTitleFieldProps = {
     defaultTitle?: string;
     defaultDesc?: string;
     onChange: (title: string, description: string) => void;
@@ -42,9 +42,6 @@ const ModifyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFi
                 fullWidth
                 variant="standard"
                 onChange={handleChangeTitle}
-                InputProps={{
-                    disableUnderline: true
-                }}
             />
             <StyledDescription
                 value={description}
@@ -53,9 +50,6 @@ const ModifyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFi
                 multiline
                 variant="standard"
                 onChange={handleChangeDescription}
-                InputProps={{
-                    disableUnderline: true
-                }}
             />
 
         </QuestionContainer>
