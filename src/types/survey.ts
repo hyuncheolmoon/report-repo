@@ -1,23 +1,21 @@
-enum QuestionType {
-    TEXT = 'text',
-    TEXTAREA = 'textarea',
-    RADIO = 'radio',
-    SELECT = 'select',
-    CHECKBOX = 'checkbox',
+export enum QuestionType {
+    TEXTAREA = 'TEXTAREA',
+    DROPDOWN = 'DROPDOWN',
+    CHECKBOX = 'CHECKBOX',
 }
 
-interface QuestionOption {
+export enum QuestionTypeLabel {
+    TEXTAREA = '텍스트',
+    DROPDOWN = '드롭박스',
+    CHECKBOX = '체크박스',
+}
+
+
+export interface Question<T extends unknown> {
     id: string;
-    label: string;
-    value?: string;
-}
-
-interface Question {
     type: QuestionType;
-    id: string;
-    title: string;
-    options: Array<QuestionOption>;
+    title?: string;
+    text?: string;
+    options: T[];
     required: boolean;
 }
-
-export type { Question };

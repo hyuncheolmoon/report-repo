@@ -1,10 +1,10 @@
 
 'use client';
 
-import React, { useCallback, useState } from 'react';
-import styled from '@emotion/styled';
+import React, { useCallback, useState } from 'react'; import styled from '@emotion/styled';
 import { TextInput } from '@/components/atoms';
 import { palette } from '@/constants';
+import { QuestionContainer } from '../../../assets/styled/servey';
 
 interface SurveyTitleFieldProps {
     defaultTitle?: string;
@@ -12,7 +12,7 @@ interface SurveyTitleFieldProps {
     onChange: (title: string, description: string) => void;
 }
 
-const SurveyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFieldProps) => {
+const ModifyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFieldProps) => {
     const [title, setTitle] = useState<string>(defaultTitle || '');
     const [description, setDescription] = useState<string>(defaultDesc || '');
 
@@ -35,7 +35,7 @@ const SurveyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFi
      *****************************************************************************/
 
     return (
-        <TitleContainer>
+        <QuestionContainer>
             <StyledTextInput
                 value={title}
                 placeholder="제목 없는 설문지"
@@ -58,19 +58,13 @@ const SurveyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFi
                 }}
             />
 
-        </TitleContainer>
+        </QuestionContainer>
     );
 };
 
-export default SurveyTitleField;
+export default ModifyTitleField;
 
 
-const TitleContainer = styled.div`
-  padding: 24px 24px 12px;
-  background-color: ${palette.white};
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-`;
 const StyledTextInput = styled(TextInput)`
   .MuiInputBase-input {
     font-size: 28px;
