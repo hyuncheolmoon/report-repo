@@ -2,8 +2,10 @@
 
 import React from 'react';
 import styled from '@emotion/styled';
+
+import { QuestionItemBox } from '@/assets/styled/servey';
+
 import { palette } from '@/constants';
-import { QuestionContainer } from '../../../assets/styled/servey';
 
 type ViewTitleBoxProps = {
   subject: string;
@@ -16,10 +18,10 @@ const ViewTitleBox = ({ subject, description }: ViewTitleBoxProps) => {
    *****************************************************************************/
 
   return (
-    <QuestionContainer>
+    <QuestionItemBox>
       <TitleWrapper>{subject}</TitleWrapper>
       <DescriptionWrapper>{description}</DescriptionWrapper>
-    </QuestionContainer>
+    </QuestionItemBox>
   );
 };
 

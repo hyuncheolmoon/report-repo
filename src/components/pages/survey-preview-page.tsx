@@ -1,25 +1,23 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import styled from '@emotion/styled';
+import { useRouter } from 'next/navigation';
+import { RiArrowLeftLine } from 'react-icons/ri';
 
-import { FullPageLayout, PageContent, PageHeader, ContentLayer, SurveyContainer, BackButton } from '@/assets/styled';
-
-import useStorageHandler from '@/hooks/use-storage-handler';
-import { Templete } from '@/stores/use-templete-store';
+import { usePathHandler, useStorageHandler } from '@/hooks';
+import { Templete } from '@/stores';
 
 import { ViewQuestionBox, ViewTitleBox } from '@/components/molecules';
-
-import { usePathHandler } from '@/hooks';
-import { RiArrowLeftLine } from 'react-icons/ri';
+import { FullPageLayout, PageContent, PageHeader, ContentLayer, SurveyContainer, BackButton } from '@/assets/styled';
 
 const SurveyPreviewPage = () => {
   const router = useRouter();
 
-  const [templete, setTemplete] = useState<Templete>();
   const { getTempServey } = useStorageHandler();
+
   const { path } = usePathHandler();
+
+  const [templete, setTemplete] = useState<Templete>();
 
   const getData = useCallback(() => {
     const survey = getTempServey();
@@ -34,6 +32,9 @@ const SurveyPreviewPage = () => {
    * ACTION
    *****************************************************************************/
 
+  /**
+   * 템플릿 상세 페이지로 이동(뒤로가기)
+   */
   const handleMoveDetailPage = useCallback(() => {
     if (templete?.id) {
       router.push(`${path.main}/${templete?.id}`);
@@ -71,8 +72,3 @@ const SurveyPreviewPage = () => {
   );
 };
 export default SurveyPreviewPage;
-
-const RightBtnGroup = styled.div`
-  display: flex;
-  gap: 10px;
-`;

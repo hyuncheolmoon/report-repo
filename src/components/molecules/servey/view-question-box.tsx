@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
 
 import { TextInput, Select } from '@/components/atoms';
-import { QuestionContainer, QuestionContents, QuestionHeader, Required } from '../../../assets/styled/servey';
+import { QuestionItemBox, QuestionContents, QuestionHeader, Required } from '@/assets/styled/servey';
 
-import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types/survey';
+import { Question, QuestionType } from '@/types/survey';
 
 import ViewOptionItem from './view-option-item';
 
@@ -45,7 +45,7 @@ const ViewQuestionBox = ({ question }: QuestionBoxProps) => {
   }, [question]);
 
   return (
-    <QuestionContainer id={`question-${question.id}`}>
+    <QuestionItemBox id={`question-${question.id}`}>
       <QuestionHeader>
         <TitleWrapper>
           {question.title}
@@ -53,7 +53,7 @@ const ViewQuestionBox = ({ question }: QuestionBoxProps) => {
         </TitleWrapper>
       </QuestionHeader>
       <OptionsWrapper>{RenderTypeItem}</OptionsWrapper>
-    </QuestionContainer>
+    </QuestionItemBox>
   );
 };
 
@@ -77,4 +77,5 @@ const TitleWrapper = styled.div`
 const DropdownBox = styled(Select)`
   min-width: 200px;
   width: fit-content;
+  max-width: 100%;
 `;

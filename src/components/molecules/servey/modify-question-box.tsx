@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 
 import { Button, SelectChangeEvent, Switch } from '@mui/material';
-import { TextInput, Select, Checkbox } from '@/components/atoms';
-import { QuestionContainer, QuestionContents, QuestionHeader } from '../../../assets/styled/servey';
+import { TextInput, Select } from '@/components/atoms';
+import { QuestionItemBox, QuestionContents, QuestionHeader } from '@/assets/styled/servey';
 
 import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types/survey';
 
@@ -25,6 +25,9 @@ type QuestionBoxProps = {
 const QuestionBox = ({ question }: QuestionBoxProps) => {
   const { templete, changeQuestion, deleteQuestion } = useTempleteStore();
 
+  /**
+   * 타입 리스트
+   */
   const typeList = useMemo(() => {
     return Object.values(QuestionType).map((type) => ({
       label: QuestionTypeLabel[type],
@@ -36,29 +39,39 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
    * ACTION
    *****************************************************************************/
   /**
-   * 옵션 데이터 조회
+   * 첫번째 새로운 옵션 생성 및 반환 
    */
   const getNewOptions: (data: Question) => OptionItem[] = useCallback((data) => {
     const newOptions = data.options.length > 0 ? data.options : [{ id: generateUUID(), content: `옵션 1` }];
     return newOptions;
   }, []);
 
+  /**
+   * 질문 제목 변경
+   */
   const handleChangeTitle = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      let title = e.target.value || '';
-      title = title.trim();
-
-      if (title.length > 100) {
-        toast.error('질문은 100자 이하로 입력해주세요.');
-        return;
-      }
-
-      const newData = { ...question, title: title };
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const title = e.target.value ?? '';
+      const newData = { ...question, title: title.trim() };
       changeQuestion(newData);
     },
     [question, changeQuestion]
   );
 
+  //const handleCheckValidTitle = useCallback(
+  //  (e: React.ChangeEvent<HTMLInputElement>) => {
+  //    const title = e.target.value ?? '';
+  //    if (title.length >= 80) {
+  //      toast.error('설문지 제목은 80자 이하로 입력해주세요.');
+  //      return;
+  //    }
+  //  },
+  //  [question, changeQuestion]
+  //);
+
+  /**
+   * 질문 타입 변경
+   */
   const handleChangeType = useCallback(
     (event: SelectChangeEvent<unknown>) => {
       const selectedType = event.target.value as QuestionType;
@@ -70,6 +83,9 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
     [question, getNewOptions, changeQuestion]
   );
 
+  /**
+   * 필수 여부 변경
+   */
   const handleChangeRequired = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const newData = { ...question, required: e.target.checked };
@@ -78,6 +94,9 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
     [question, changeQuestion]
   );
 
+  /**
+   * 질문 삭제
+   */
   const handleDeleteQuestion = useCallback(() => {
     if (templete.questions.length === 1) {
       toast.error('한가지 이상의 질문이 필요합니다.');
@@ -109,11 +128,20 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
   }, [question]);
 
   return (
-    <QuestionContainer id={`question-${question.id}`}>
+    <QuestionItemBox id={`question-${question.id}`}>
       <QuestionHeader>
-        <TitleWrapper>
-          <TextInput value={question.title} placeholder="질문" fullWidth onChange={handleChangeTitle} />
-        </TitleWrapper>
+        <TitleInputBox>
+          <TextInput
+            name={`question-title-${question.id}`}
+            defaultValue={question.title}
+            placeholder="질문"
+            fullWidth
+            //inputProps={{
+            //  maxLength: 80,
+            //}}
+            onBlur={handleChangeTitle}
+          />
+        </TitleInputBox>
 
         <SelectTypeWrapper>
           <Select value={question.type} onChange={handleChangeType} fullWidth options={typeList} />
@@ -129,7 +157,7 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
           <RiDeleteBinLine />
         </DeleteBtn>
       </QuestionFooter>
-    </QuestionContainer>
+    </QuestionItemBox>
   );
 };
 
@@ -159,7 +187,7 @@ const DeleteBtn = styled(Button)`
   color: ${palette.red200};
 `;
 
-const TitleWrapper = styled.div`
+const TitleInputBox = styled.div`
   flex: 1 1 auto;
 `;
 const SelectTypeWrapper = styled.div`

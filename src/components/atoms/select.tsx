@@ -1,6 +1,6 @@
 'use client';
 
-import { MenuItem, Select as MuiSelect, SelectChangeEvent, SelectProps } from '@mui/material';
+import { MenuItem, Select as MuiSelect, SelectProps } from '@mui/material';
 
 export type OptionItem = {
   label: string;

@@ -2,8 +2,10 @@
 
 import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
-import { palette } from '@/constants';
+
 import { ColumnType, TableColumn } from '@/components/organisms/table';
+
+import { palette } from '@/constants';
 
 type TableBodyProps<T> = {
   columns: TableColumn[];
@@ -21,7 +23,7 @@ const TableBody = <T,>({ data, columns, onClick }: TableBodyProps<T>) => {
         if (column.render) {
           return column.render(item, idx as number);
         }
-        return item[column.key as keyof T] || '';
+        return item[column.key as keyof T] ?? '';
       });
     });
   }, [columns, data]);

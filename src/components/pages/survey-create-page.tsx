@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
 
+import { RiArrowLeftLine } from 'react-icons/ri';
 import { Button } from '@mui/material';
 import {
   FullPageLayout,
@@ -23,9 +24,7 @@ import { useTempleteStore } from '@/stores/use-templete-store';
 
 import { ModifyQuestionBox, ModifyTitleBox } from '@/components/molecules';
 
-import { toast } from '@/utils';
-import { generateUUID } from '@/utils';
-import { RiArrowLeftLine } from 'react-icons/ri';
+import { toast, generateUUID } from '@/utils';
 
 const SurveyCreatePage = () => {
   const router = useRouter();
@@ -48,6 +47,9 @@ const SurveyCreatePage = () => {
     setInitData();
   }, [setInitData]);
 
+  /**
+   * 템플릿 변경 감지 후 임시저지
+   */
   useEffect(() => {
     const unsub = useTempleteStore.subscribe(
       (state) => state.templete,
@@ -63,17 +65,30 @@ const SurveyCreatePage = () => {
   /*****************************************************************************
    * ACTION
    *****************************************************************************/
+  /**
+   * 설문 생성
+   */
   const handleCreateSurvey = useCallback(() => {
     console.log('templete', templete);
 
     if (templete.subject === '') {
       toast.error('제목을 입력해주세요.');
+      const titleInput = document.getElementsByName('survey-subject');
+      if (titleInput?.[0]) {
+        titleInput[0].focus();
+      }
       return;
     }
 
-    if (templete.questions.some((question) => question.title === '')) {
-      toast.error('질문을 입력해주세요.');
-      return;
+    for (const question of templete.questions) {
+      if (question.title === '') {
+        toast.error('질문을 입력해주세요.');
+        const titleInput = document.getElementsByName(`question-title-${question.id}`);
+        if (titleInput?.[0]) {
+          titleInput[0].focus();
+        }
+        return;
+      }
     }
 
     const nowDate = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -83,7 +98,16 @@ const SurveyCreatePage = () => {
     router.push('/survey');
   }, [templete]);
 
+  /**
+   * 질문 추가
+   */
   const handleAddQuestion = useCallback(() => {
+
+    if(templete.questions.length >= 20) {
+      toast.error('질문은 최대 20개까지만 생성 가능합니다.');
+      return;
+    }
+
     const newData = addQuestion();
     setTimeout(() => {
       const questionElement = document.getElementById(`question-${newData.id}`);
@@ -91,8 +115,11 @@ const SurveyCreatePage = () => {
         questionElement.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
-  }, []);
+  }, [templete]);
 
+  /**
+   * 미리보기 페이지로 이동
+   */
   const handleMovePreviewPage = useCallback(() => {
     postTempServey(templete);
     router.replace(`${path.preview}`);

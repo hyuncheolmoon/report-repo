@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { RiCheckboxBlankCircleLine, RiCloseCircleLine } from 'react-icons/ri';
-import { QuestionType, OptionItem, Question } from '@/types/survey';
-import { generateUUID, toast } from '@/utils';
-import { TextInput } from '@/components/atoms';
+import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
+import { RiCheckboxBlankCircleLine, RiCloseCircleLine } from 'react-icons/ri';
+
 import { Button } from '@mui/material';
-import { palette } from '@/constants';
+import { TextInput } from '@/components/atoms';
+
 import { useTempleteStore } from '@/stores/use-templete-store';
 
+import { QuestionType, OptionItem, Question } from '@/types/survey';
+import { generateUUID, toast } from '@/utils';
+import { palette } from '@/constants';
 type ModifyOptionItemProps = {
   question: Question;
 };
@@ -21,7 +22,10 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
    * ACTION / EVENT
    *****************************************************************************/
 
-  const handleAddItem = useCallback(() => {
+  /**
+   * 옵션 추가
+   */
+  const handleAddOptionItem = useCallback(() => {
     changeQuestion({
       ...question,
       options: [...question.options, { id: generateUUID(), content: `옵션 ${question.options.length + 1}` }],
@@ -39,23 +43,19 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
     [question, changeQuestion]
   );
 
+  /**
+   * 옵션 내용 변경
+   */
   const handleChangeContent = useCallback(
-    (id: string, value: string) => {
-      const content = value.trim();
+    (event: React.FocusEvent<HTMLInputElement>, id: string, index: number) => {
+      const content = event.target.value || `옵션 ${index + 1}`;
+      if (!event.target.value) {
+        event.target.value = content;
+      }
       changeQuestion({
         ...question,
-        options: question.options.map((o) => (o.id === id ? { ...o, content } : o)),
+        options: question.options.map((o) => (o.id === id ? { ...o, content: content.trim() } : o)),
       });
-    },
-    [question, changeQuestion]
-  );
-
-  const handleCheckContent = useCallback(
-    (id: string, value: string, index: number) => {
-      const content = value.trim();
-      if (content === '') {
-        handleChangeContent(id, `옵션 ${index + 1}`);
-      }
     },
     [question, changeQuestion]
   );
@@ -73,12 +73,11 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
         </ItemDivison>
         <ItemText>
           <TextInput
-            value={item.content}
+            defaultValue={item.content}
             fullWidth
             placeholder="내용을 입력하세요"
             variant="filled"
-            onChange={(e) => handleChangeContent(item.id, e.target.value)}
-            onBlur={(e) => handleCheckContent(item.id, e.target.value, index)}
+            onBlur={(event) => handleChangeContent(event as React.FocusEvent<HTMLInputElement>, item.id, index)}
           />
           <DeleteBtn onClick={() => handleRemoveItem(item.id)}>
             <RiCloseCircleLine />
@@ -94,7 +93,7 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
       <ItemsList>
         {question.options.map(renderItem)}
         <AddBtnbox>
-          <Button onClick={handleAddItem}>옵션 추가</Button>
+          <Button onClick={handleAddOptionItem}>옵션 추가</Button>
         </AddBtnbox>
       </ItemsList>
     </ListContainer>

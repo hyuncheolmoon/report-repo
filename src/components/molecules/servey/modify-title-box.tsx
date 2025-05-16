@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
+
 import { TextInput } from '@/components/atoms';
+
+import { QuestionItemBox } from '@/assets/styled/servey';
+
 import { palette } from '@/constants';
-import { QuestionContainer } from '../../../assets/styled/servey';
 
 type ModifyTitleBoxProps = {
   subject?: string;
@@ -17,18 +20,24 @@ const ModifyTitleBox = ({ subject, description, onChange }: ModifyTitleBoxProps)
    * ACTION
    *****************************************************************************/
 
+  /**
+   * 제목 변경
+   */
   const handleChangeTitle = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(description);
-      onChange(e.target.value, description || '');
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const value = e.target.value ?? '';
+      onChange(value.trim(), description ?? '');
     },
     [onChange, description]
   );
 
+  /**
+   * 설명 변경
+   */
   const handleChangeDescription = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(subject);
-      onChange(subject || '', e.target.value);
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const value = e.target.value ?? '';
+      onChange(subject ?? '', value.trim());
     },
     [onChange, subject]
   );
@@ -38,30 +47,31 @@ const ModifyTitleBox = ({ subject, description, onChange }: ModifyTitleBoxProps)
    *****************************************************************************/
 
   return (
-    <QuestionContainer>
-      <StyledTextInput
-        value={subject}
+    <QuestionItemBox>
+      <TitleTextInput
+        defaultValue={subject}
+        name="survey-subject"
         placeholder="제목 없는 설문지"
         fullWidth
         variant="standard"
-        onChange={handleChangeTitle}
+        onBlur={handleChangeTitle}
       />
-      <StyledDescription
-        value={description}
+      <DescTextInput
+        defaultValue={description}
         placeholder="설문지 설명"
         fullWidth
         multiline
         rows={3}
         variant="outlined"
-        onChange={handleChangeDescription}
+        onBlur={handleChangeDescription}
       />
-    </QuestionContainer>
+    </QuestionItemBox>
   );
 };
 
 export default ModifyTitleBox;
 
-const StyledTextInput = styled(TextInput)`
+const TitleTextInput = styled(TextInput)`
   .MuiInputBase-input {
     font-size: 28px;
     font-weight: 400;
@@ -74,7 +84,7 @@ const StyledTextInput = styled(TextInput)`
   }
 `;
 
-const StyledDescription = styled(TextInput)`
+const DescTextInput = styled(TextInput)`
   .MuiInputBase-input {
     font-size: 14px;
     font-weight: 400;

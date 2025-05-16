@@ -33,6 +33,7 @@ const Table = styled.table`
 `;
 
 const TableLayout = styled.div`
-  min-width: 500px;
+  // min-width: 500px;
+  overflow-x: auto;
 `;
 

@@ -3,17 +3,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
+import { RiDeleteBinLine } from 'react-icons/ri';
 
-import { Button, debounce } from '@mui/material';
-// import { MdOutlineAdd } from "react-icons/md";
-import { FullPageLayout, PageContent, PageHeader, PageLayout } from '@/assets/styled';
-import { ColumnType, RootTable, TableColumn } from '@/components/organisms/table';
+import { usePathHandler, useStorageHandler } from '@/hooks';
+import { Templete } from '@/stores';
 
+import { Button, IconButton } from '@mui/material';
+import { RootTable, TableColumn } from '@/components/organisms/table';
+
+import { FullPageLayout, PageContent, PageHeader } from '@/assets/styled';
 import { palette } from '@/constants';
-import useStorageHandler from '@/hooks/use-storage-handler';
-import { Templete, useTempleteStore } from '@/stores/use-templete-store';
 import { toast } from '@/utils';
-import { usePathHandler } from '@/hooks';
 
 const SurveyPage = () => {
   const router = useRouter();
@@ -89,25 +89,12 @@ const SurveyPage = () => {
    * RENDER
    *****************************************************************************/
 
-  const renderPreviewBtn = useCallback(
-    (templete: Templete) => {
-      return (
-        <Button variant="contained" color="primary" onClick={(event) => handleOpenPreview(event, templete)}>
-          미리보기
-        </Button>
-      );
-    },
-    [router]
-  );
-
   const renderDeleteBtn = useCallback(
-    (templete: Templete) => {
-      return (
-        <Button variant="contained" color="primary" onClick={(event) => handleDeleteSurvey(event, templete)}>
-          삭졔
-        </Button>
-      );
-    },
+    (templete: Templete) => (
+      <IconButton onClick={(event) => handleDeleteSurvey(event, templete)}>
+        <RiDeleteBinLine />
+      </IconButton>
+    ),
     [router]
   );
 
@@ -118,10 +105,9 @@ const SurveyPage = () => {
       { title: '항목 수', render: (data: Templete) => <span>{data.questions?.length}</span> },
       { key: 'createdAt', title: '생성일' },
       { key: 'updatedAt', title: '수정일' },
-      { title: '미리보기', render: renderPreviewBtn },
       { title: '삭졔', render: renderDeleteBtn },
     ],
-    [renderPreviewBtn, renderDeleteBtn]
+    [renderDeleteBtn]
   );
 
   return (
@@ -136,7 +122,7 @@ const SurveyPage = () => {
       <PageContent>
         <TableContainer>
           <TableHeader>
-            <TotalCount>총 {list.length} 개</TotalCount>
+            <TotalCount>설문지: {list.length} 개</TotalCount>
             <SearchInput
               placeholder="검색어를 입력하세요"
               onChange={(e) => handleChangeKeyword(e.target.value)}
@@ -173,7 +159,7 @@ const TableHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 8px 18px;
+  padding: 8px;
   height: auto;
 `;
 

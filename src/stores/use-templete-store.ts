@@ -45,7 +45,6 @@ const templeteStoreInitializer: StateCreator<TempleteState> = (set, get) => ({
     questions: [],
   },
   setTemplete: (templete: Templete) => {
-    console.log('add templete', templete);
     set({
       templete: templete,
     });
@@ -74,7 +73,6 @@ const templeteStoreInitializer: StateCreator<TempleteState> = (set, get) => ({
   },
   changeSubject: (subject: string, description?: string) => {
     const raw = get().templete;
-    console.log(subject, description);
     set({
       templete: {
         ...raw,

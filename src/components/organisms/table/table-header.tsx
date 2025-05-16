@@ -1,10 +1,12 @@
 'use client';
 
 import React from 'react';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { palette } from '@/constants';
+import { css } from '@emotion/react';
+
 import { TableColumn } from '@/components/organisms/table';
+
+import { palette } from '@/constants';
 
 type TableHeaderProps = {
   columns: TableColumn[];

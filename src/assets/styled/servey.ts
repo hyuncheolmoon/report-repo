@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { palette } from '@/constants';
 import { IconButton, Button } from '@mui/material';
 
-export const QuestionContainer = styled.div`
+export const QuestionItemBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
