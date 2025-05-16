@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import styled from '@emotion/styled';
 import moment from 'moment';
 
 import { Button } from '@mui/material';
@@ -17,44 +18,48 @@ import {
   RightBtnGroup,
 } from '@/assets/styled';
 
-import { usePathHandler } from '@/hooks';
 import useStorageHandler from '@/hooks/use-storage-handler';
 import { useTempleteStore } from '@/stores/use-templete-store';
 
 import { ModifyQuestionBox, ModifyTitleBox } from '@/components/molecules';
 
 import { toast } from '@/utils';
-import { generateUUID } from '@/utils';
+import { usePathHandler } from '@/hooks';
 import { RiArrowLeftLine } from 'react-icons/ri';
 
-const SurveyCreatePage = () => {
+const SurveyDetailPage = () => {
   const router = useRouter();
-  const { templete, setTemplete, createTemplete, changeSubject, addQuestion, reset } = useTempleteStore();
-  const { postServey, getTempServey, postTempServey } = useStorageHandler();
+  const { templete, setTemplete, changeSubject, addQuestion, reset } = useTempleteStore();
+
+  const { surveyId } = useParams();
+
+  const { updateServey, getServey, postTempServey, getTempServey, deleteTempServey } = useStorageHandler();
   const { path } = usePathHandler();
 
-  const setInitData = useCallback(() => {
+  const getData = useCallback(() => {
+    const survey = getServey(surveyId as string);
+    if (!survey) {
+      toast.error('설문이 존재하지 않습니다.');
+      router.push(path.main);
+      return;
+    }
     const temp = getTempServey();
-    console.log('temp', temp);
     // 미리보기 후 복귀했을때 수정본 유지를 위한 코드
-    if (temp && !temp.id) {
+    if (temp && temp.id && temp.id === surveyId) {
       setTemplete(temp);
       return;
     }
-    createTemplete();
-  }, [createTemplete, getTempServey, setTemplete]);
+    setTemplete(survey);
+  }, [setTemplete, surveyId, deleteTempServey]);
 
   useEffect(() => {
-    setInitData();
-  }, [setInitData]);
+    getData();
+  }, []);
 
   useEffect(() => {
     const unsub = useTempleteStore.subscribe(
       (state) => state.templete,
-      (newTemplete) => {
-        console.log('newTemplete', newTemplete);
-        postTempServey(newTemplete);
-      }
+      (newTemplete) => postTempServey(newTemplete)
     );
 
     return () => unsub();
@@ -63,9 +68,7 @@ const SurveyCreatePage = () => {
   /*****************************************************************************
    * ACTION
    *****************************************************************************/
-  const handleCreateSurvey = useCallback(() => {
-    console.log('templete', templete);
-
+  const handleSaveSurvey = useCallback(() => {
     if (templete.subject === '') {
       toast.error('제목을 입력해주세요.');
       return;
@@ -77,10 +80,21 @@ const SurveyCreatePage = () => {
     }
 
     const nowDate = moment().format('YYYY-MM-DD HH:mm:ss');
-    postServey({ ...templete, id: generateUUID(), createdAt: nowDate, updatedAt: nowDate });
-    toast.success('설문이 생성 되었습니다.');
+    updateServey({ ...templete, id: surveyId as string, updatedAt: nowDate });
+    toast.success('설문이 수정 되었습니다.');
+    deleteTempServey();
     reset();
     router.push('/survey');
+  }, [templete, deleteTempServey, reset, router, path]);
+
+  const handleMoveSurveyPage = useCallback(() => {
+    deleteTempServey();
+    router.replace(path.main);
+  }, [deleteTempServey, router, path]);
+
+  const handleMovePreviewPage = useCallback(() => {
+    postTempServey(templete);
+    router.replace(`${path.preview}`);
   }, [templete]);
 
   const handleAddQuestion = useCallback(() => {
@@ -93,18 +107,9 @@ const SurveyCreatePage = () => {
     }, 100);
   }, []);
 
-  const handleMovePreviewPage = useCallback(() => {
-    postTempServey(templete);
-    router.replace(`${path.preview}`);
-  }, [templete]);
-
-  const handleMoveSurveyPage = useCallback(() => {
-    router.replace(path.main);
-  }, []);
-
   const handleChangeHeader = useCallback(
-    (subject: string, description: string) => {
-      changeSubject(subject, description);
+    (title: string, description: string) => {
+      changeSubject(title, description);
     },
     [changeSubject]
   );
@@ -113,19 +118,22 @@ const SurveyCreatePage = () => {
    * RENDER
    *****************************************************************************/
 
+  if (!templete) {
+    return null;
+  }
+
   return (
     <FullPageLayout>
       <PageHeader>
         <BackButton variant="text" color="primary" onClick={handleMoveSurveyPage}>
           <RiArrowLeftLine />
-          템플릿 생성
+          템플릿 상세 
         </BackButton>
-
         <RightBtnGroup>
           <Button variant="contained" color="primary" onClick={handleMovePreviewPage}>
             미리보기
           </Button>
-          <Button variant="contained" color="primary" onClick={handleCreateSurvey}>
+          <Button variant="contained" color="primary" onClick={handleSaveSurvey}>
             저장
           </Button>
         </RightBtnGroup>
@@ -152,4 +160,4 @@ const SurveyCreatePage = () => {
     </FullPageLayout>
   );
 };
-export default SurveyCreatePage;
+export default SurveyDetailPage;

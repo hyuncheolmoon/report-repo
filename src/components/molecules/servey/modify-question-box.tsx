@@ -9,21 +9,21 @@ import { QuestionContainer, QuestionContents, QuestionHeader } from '../../../as
 
 import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types/survey';
 
-import ListItem, { defaultItem } from './modify-option-item';
+import ModifyOptionItem from './modify-option-item';
 
 import { palette } from '@/constants';
 import { generateUUID } from '@/utils';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { useTempleteStore } from '@/stores/use-templete-store';
 
+import { toast } from '@/utils';
+
 type QuestionBoxProps = {
   question: Question;
-  // onChange?: (question: Question) => void;
-  // onDelete?: (id: string) => void;
 };
 
 const QuestionBox = ({ question }: QuestionBoxProps) => {
-  const { changeQuestion, deleteQuestion } = useTempleteStore();
+  const { templete, changeQuestion, deleteQuestion } = useTempleteStore();
 
   const typeList = useMemo(() => {
     return Object.values(QuestionType).map((type) => ({
@@ -32,14 +32,6 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
     }));
   }, []);
 
-  //useEffect(() => {
-  //    if (questionData.type === QuestionType.TEXTAREA) {
-  //        setQuestionData({ ...questionData, options: [] });
-  //    } else {
-  //        setQuestionData({ ...questionData, options: getOptionData(questionData) });
-  //    }
-  //}, [questionData.type]);
-
   /*****************************************************************************
    * ACTION
    *****************************************************************************/
@@ -47,13 +39,21 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
    * 옵션 데이터 조회
    */
   const getNewOptions: (data: Question) => OptionItem[] = useCallback((data) => {
-    const newOptions = data.options.length > 0 ? data.options : [{ ...defaultItem, id: generateUUID() }];
+    const newOptions = data.options.length > 0 ? data.options : [{ id: generateUUID(), content: `옵션 1` }];
     return newOptions;
   }, []);
 
   const handleChangeTitle = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newData = { ...question, title: e.target.value };
+      let title = e.target.value || '';
+      title = title.trim();
+
+      if (title.length > 100) {
+        toast.error('질문은 100자 이하로 입력해주세요.');
+        return;
+      }
+
+      const newData = { ...question, title: title };
       changeQuestion(newData);
     },
     [question, changeQuestion]
@@ -79,8 +79,16 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
   );
 
   const handleDeleteQuestion = useCallback(() => {
+    if (templete.questions.length === 1) {
+      toast.error('한가지 이상의 질문이 필요합니다.');
+      return;
+    }
+    const confirm = window.confirm('삭제하시겠습니까?');
+    if (!confirm) {
+      return;
+    }
     deleteQuestion(question.id);
-  }, [question, deleteQuestion]);
+  }, [templete, question, deleteQuestion]);
 
   /*****************************************************************************
    * RENDER
@@ -96,12 +104,12 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
         );
       case QuestionType.DROPDOWN:
       case QuestionType.CHECKBOX:
-        return <ListItem question={question} />;
+        return <ModifyOptionItem question={question} />;
     }
   }, [question]);
 
   return (
-    <QuestionContainer>
+    <QuestionContainer id={`question-${question.id}`}>
       <QuestionHeader>
         <TitleWrapper>
           <TextInput value={question.title} placeholder="질문" fullWidth onChange={handleChangeTitle} />
@@ -115,7 +123,7 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
       <QuestionFooter>
         <RequiredBox>
           <span>필수</span>
-          <Switch onChange={handleChangeRequired} />
+          <Switch checked={question.required} onChange={handleChangeRequired} />
         </RequiredBox>
         <DeleteBtn onClick={handleDeleteQuestion}>
           <RiDeleteBinLine />

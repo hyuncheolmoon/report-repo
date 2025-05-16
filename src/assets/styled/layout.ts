@@ -13,7 +13,6 @@ export const PageHeader = styled.div`
 `;
 
 export const PageContent = styled.div`
-  padding: 12px 18px 20px 18px;
   height: 100%;
   overflow-y: auto;
 `;
@@ -27,5 +26,9 @@ export const PageLayout = styled.div`
   min-width: 778px;
   width: 100%;
   position: relative;
-
 `;
+
+export const FullPageLayout = styled(PageLayout)`
+  min-width: unset;
+`;
+

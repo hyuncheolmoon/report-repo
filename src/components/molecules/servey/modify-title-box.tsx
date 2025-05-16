@@ -6,34 +6,31 @@ import { TextInput } from '@/components/atoms';
 import { palette } from '@/constants';
 import { QuestionContainer } from '../../../assets/styled/servey';
 
-type SurveyTitleFieldProps = {
-  defaultTitle?: string;
-  defaultDesc?: string;
-  onChange: (title: string, description: string) => void;
+type ModifyTitleBoxProps = {
+  subject?: string;
+  description?: string;
+  onChange: (subject: string, description: string) => void;
 };
 
-const ModifyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFieldProps) => {
-  const [title, setTitle] = useState<string>(defaultTitle || '');
-  const [description, setDescription] = useState<string>(defaultDesc || '');
-
+const ModifyTitleBox = ({ subject, description, onChange }: ModifyTitleBoxProps) => {
   /*****************************************************************************
    * ACTION
    *****************************************************************************/
 
   const handleChangeTitle = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setTitle(e.target.value);
-      onChange(e.target.value, description);
+      console.log(description);
+      onChange(e.target.value, description || '');
     },
     [onChange, description]
   );
 
   const handleChangeDescription = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDescription(e.target.value);
-      onChange(title, e.target.value);
+      console.log(subject);
+      onChange(subject || '', e.target.value);
     },
-    [onChange, title]
+    [onChange, subject]
   );
 
   /*****************************************************************************
@@ -43,7 +40,7 @@ const ModifyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFi
   return (
     <QuestionContainer>
       <StyledTextInput
-        value={title}
+        value={subject}
         placeholder="제목 없는 설문지"
         fullWidth
         variant="standard"
@@ -54,14 +51,15 @@ const ModifyTitleField = ({ defaultTitle, defaultDesc, onChange }: SurveyTitleFi
         placeholder="설문지 설명"
         fullWidth
         multiline
-        variant="standard"
+        rows={3}
+        variant="outlined"
         onChange={handleChangeDescription}
       />
     </QuestionContainer>
   );
 };
 
-export default ModifyTitleField;
+export default ModifyTitleBox;
 
 const StyledTextInput = styled(TextInput)`
   .MuiInputBase-input {

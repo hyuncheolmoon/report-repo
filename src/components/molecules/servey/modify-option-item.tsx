@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { RiArrowDropDownLine, RiCheckboxBlankCircleLine, RiCloseCircleLine, RiDeleteBinLine } from 'react-icons/ri';
+import { RiCheckboxBlankCircleLine, RiCloseCircleLine } from 'react-icons/ri';
 import { QuestionType, OptionItem, Question } from '@/types/survey';
 import { generateUUID, toast } from '@/utils';
 import { TextInput } from '@/components/atoms';
@@ -10,11 +10,6 @@ import styled from '@emotion/styled';
 import { Button } from '@mui/material';
 import { palette } from '@/constants';
 import { useTempleteStore } from '@/stores/use-templete-store';
-
-export const defaultItem: OptionItem = {
-  id: '',
-  content: '옵션',
-};
 
 type ModifyOptionItemProps = {
   question: Question;
@@ -27,13 +22,16 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
    *****************************************************************************/
 
   const handleAddItem = useCallback(() => {
-    changeQuestion({ ...question, options: [...question.options, { ...defaultItem, id: generateUUID() }] });
+    changeQuestion({
+      ...question,
+      options: [...question.options, { id: generateUUID(), content: `옵션 ${question.options.length + 1}` }],
+    });
   }, [question, changeQuestion]);
 
   const handleRemoveItem = useCallback(
     (id: string) => {
       if (question.options.length === 1) {
-        toast.error('최소 하나 이상의 옵션이 필요합니다.');
+        toast.error('하나 이상의 옵션이 필요합니다.');
         return;
       }
       changeQuestion({ ...question, options: question.options.filter((o) => o.id !== id) });
@@ -43,10 +41,21 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
 
   const handleChangeContent = useCallback(
     (id: string, value: string) => {
+      const content = value.trim();
       changeQuestion({
         ...question,
-        options: question.options.map((o) => (o.id === id ? { ...o, content: value } : o)),
+        options: question.options.map((o) => (o.id === id ? { ...o, content } : o)),
       });
+    },
+    [question, changeQuestion]
+  );
+
+  const handleCheckContent = useCallback(
+    (id: string, value: string, index: number) => {
+      const content = value.trim();
+      if (content === '') {
+        handleChangeContent(id, `옵션 ${index + 1}`);
+      }
     },
     [question, changeQuestion]
   );
@@ -56,28 +65,27 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
    *****************************************************************************/
 
   const renderItem = useCallback(
-    (item: OptionItem, index: number) => {
-      return (
-        <ListItem key={item.id}>
-          <ItemDivison>
-            {question.type === QuestionType.CHECKBOX && <RiCheckboxBlankCircleLine />}
-            {question.type === QuestionType.DROPDOWN && index + 1}
-          </ItemDivison>
-          <ItemText>
-            <TextInput
-              value={item.content}
-              fullWidth
-              placeholder="내용을 입력하세요"
-              variant="filled"
-              onChange={(e) => handleChangeContent(item.id, e.target.value)}
-            />
-            <DeleteBtn onClick={() => handleRemoveItem(item.id)}>
-              <RiCloseCircleLine />
-            </DeleteBtn>
-          </ItemText>
-        </ListItem>
-      );
-    },
+    (item: OptionItem, index: number) => (
+      <ListItem key={item.id}>
+        <ItemDivison>
+          {question.type === QuestionType.CHECKBOX && <RiCheckboxBlankCircleLine />}
+          {question.type === QuestionType.DROPDOWN && index + 1}
+        </ItemDivison>
+        <ItemText>
+          <TextInput
+            value={item.content}
+            fullWidth
+            placeholder="내용을 입력하세요"
+            variant="filled"
+            onChange={(e) => handleChangeContent(item.id, e.target.value)}
+            onBlur={(e) => handleCheckContent(item.id, e.target.value, index)}
+          />
+          <DeleteBtn onClick={() => handleRemoveItem(item.id)}>
+            <RiCloseCircleLine />
+          </DeleteBtn>
+        </ItemText>
+      </ListItem>
+    ),
     [handleChangeContent, handleRemoveItem]
   );
 

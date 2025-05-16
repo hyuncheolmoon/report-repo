@@ -6,36 +6,32 @@ import { css } from '@emotion/react';
 
 import Link from 'next/link';
 
+import { usePathHandler } from '@/hooks';
 import { palette, size } from '../constants';
 
 const NavigationBar = () => {
+  const { path } = usePathHandler();
 
-  const menuList = useMemo(() => [
-    { href: '/survey', label: '설문지 관리' },
-  ], []);
-
+  const menuList = useMemo(() => [{ href: path.main, label: '설문지 관리' }], [path]);
 
   return (
     <NavbarContainer>
       <LinkContainer>
         <Division>MAIN</Division>
         <NavList>
-          {menuList.map(({ href, label }, idx) =>
+          {menuList.map(({ href, label }, idx) => (
             <LinkItem key={`nav-item-${idx}`} href={href} active={'true'}>
               {label}
             </LinkItem>
-          )}
+          ))}
         </NavList>
       </LinkContainer>
-      <NavFooter>
-        created by hyuncheol
-      </NavFooter>
+      <NavFooter>created by hyuncheol</NavFooter>
     </NavbarContainer>
   );
 };
 
 export default NavigationBar;
-
 
 const Division = styled.div`
   font-size: 13px;
@@ -82,7 +78,6 @@ const NavList = styled.div`
   gap: 2px;
 `;
 
-
 const NavFooter = styled.div`
   margin-top: 12px;
   padding: 12px;
@@ -98,5 +93,7 @@ const NavbarContainer = styled.div`
   position: relative;
   border-right: 1px solid #0000000f;
   overflow-y: auto;
+  @media (max-width: 994px) {
+    display: none;
+  }
 `;
-

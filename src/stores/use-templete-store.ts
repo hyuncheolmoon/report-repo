@@ -1,50 +1,41 @@
 'use client';
 
-import { OptionItem, Question, QuestionType } from '@/types';
+import { Question, QuestionType } from '@/types';
 import { generateUUID } from '@/utils';
-import { StateCreator } from 'zustand';
-import { create } from 'zustand';
-
-
+import { create, StateCreator } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 type BaseDate = {
   createdAt?: string;
   updatedAt?: string;
-}
+};
 
 export type Templete = BaseDate & {
   id: string;
   subject: string;
   description?: string;
   questions: Question[];
-}
+};
 
- const defaultQuestion = {
+const defaultQuestion = {
   id: '',
   title: '',
   type: QuestionType.TEXTAREA,
   options: [],
   text: '',
-  required: false
-}
-
-const defaultOption = {
-  id: '',
-  content: '',
-}
-
+  required: false,
+};
 
 type TempleteState = {
   templete: Templete;
-  set: (templete: Templete) => void;
+  setTemplete: (templete: Templete) => void;
   createTemplete: () => void;
-  changeSubject: (subject: string) => void;
-  changeDescription: (description: string) => void;
-  addQuestion: () => void;
+  changeSubject: (subject: string, description?: string) => void;
+  addQuestion: () => Question;
   deleteQuestion: (id: string) => void;
   changeQuestion: (question: Question) => void;
-}
-
+  reset: () => void;
+};
 
 const templeteStoreInitializer: StateCreator<TempleteState> = (set, get) => ({
   templete: {
@@ -53,14 +44,26 @@ const templeteStoreInitializer: StateCreator<TempleteState> = (set, get) => ({
     description: '',
     questions: [],
   },
-  set: (templete: Templete) => {
+  setTemplete: (templete: Templete) => {
+    console.log('add templete', templete);
     set({
-      templete,
+      templete: templete,
+    });
+  },
+  reset: () => {
+    console.log('reset templete');
+    set({
+      templete: {
+        id: '',
+        subject: '',
+        description: '',
+        questions: [],
+      },
     });
   },
   createTemplete: () => {
     const newTemplete = {
-      id: generateUUID(),
+      id: '',
       subject: '',
       description: '',
       questions: [{ ...defaultQuestion, id: generateUUID() }],
@@ -69,17 +72,19 @@ const templeteStoreInitializer: StateCreator<TempleteState> = (set, get) => ({
       templete: newTemplete,
     });
   },
-  changeSubject: (subject: string) => {
-    const raw = get().templete
+  changeSubject: (subject: string, description?: string) => {
+    const raw = get().templete;
+    console.log(subject, description);
     set({
       templete: {
         ...raw,
         subject,
+        description,
       },
     });
   },
   changeDescription: (description: string) => {
-    const raw = get().templete
+    const raw = get().templete;
     set({
       templete: {
         ...raw,
@@ -88,32 +93,36 @@ const templeteStoreInitializer: StateCreator<TempleteState> = (set, get) => ({
     });
   },
   addQuestion: () => {
-    const raw = get().templete
+    const raw = get().templete;
+    const newQuestion = { ...defaultQuestion, id: generateUUID() };
     set({
       templete: {
         ...raw,
-        questions: [...get().templete.questions, { ...defaultQuestion, id: generateUUID() }],
+        questions: [...raw.questions, newQuestion],
       },
     });
+    return newQuestion;
   },
   deleteQuestion: (id: string) => {
-    const raw = get().templete
+    const raw = get().templete;
+    const newQuestions = raw.questions.filter((q) => q.id !== id);
     set({
       templete: {
         ...raw,
-        questions: raw.questions.filter(q => q.id !== id),
+        questions: newQuestions,
       },
     });
   },
   changeQuestion: (question: Question) => {
-    const raw = get().templete
+    const raw = get().templete;
+    const newQuestionss = raw.questions.map((q) => (q.id === question.id ? question : q));
     set({
       templete: {
         ...raw,
-        questions: raw.questions.map(q => q.id === question.id ? question : q),
+        questions: newQuestionss,
       },
     });
   },
 });
 
-export const useTempleteStore = create<TempleteState>(templeteStoreInitializer);
+export const useTempleteStore = create<TempleteState>()(subscribeWithSelector(templeteStoreInitializer));

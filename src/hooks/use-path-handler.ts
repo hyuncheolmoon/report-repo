@@ -1,11 +1,21 @@
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
+
 const usePathHandler = () => {
+  const pathname = usePathname();
+
+  const path = useMemo(() => {
+    return {
+      main: '/survey',
+      create: '/survey/create',
+      preview: '/survey/preview',
+    };
+  }, []);
+
   return {
-    path: {
-      survey: '/survey',
-      surveyCreate: '/survey/create',
-      surveyDetail: '/survey/:surveyId',
-      surveyEdit: '/survey/:surveyId/edit',
-    },
+    path,
+    pathname,
+    showNavbar: pathname === path.main,
   };
 };
 

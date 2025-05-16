@@ -1,12 +1,6 @@
 'use client';
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import moment from 'moment';
 import styled from '@emotion/styled';
 import { IconButton } from '@mui/material';
@@ -25,26 +19,19 @@ interface IPreviewItem {
 type PreviewPanelProps = {
   uuid: number;
   title: string;
-}
-
-
+};
 
 const PreviewPanel = ({ uuid, title }: PreviewPanelProps) => {
-
   const [isOpen, setIsOpen] = useState(false);
 
   const [previewList, setPreviewList] = useState<IPreviewItem[]>([]);
-
-
-
-
 
   /*****************************************************************************
    * ACTION / EVENT
    *****************************************************************************/
 
   /**
-   * 사이드 패널 닫기 
+   * 사이드 패널 닫기
    */
   const handleCloseSidePanel = useCallback(() => {
     setIsOpen(false);
@@ -60,24 +47,21 @@ const PreviewPanel = ({ uuid, title }: PreviewPanelProps) => {
     setIsOpen(true);
   }, [isOpen, handleCloseSidePanel]);
 
-
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Escape" && isOpen) {
-      handleCloseSidePanel();
-    }
-  }, [isOpen, handleCloseSidePanel]);
-
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        handleCloseSidePanel();
+      }
+    },
+    [isOpen, handleCloseSidePanel]
+  );
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]);
-
-
-
-
 
   /*****************************************************************************
    * RENDER
@@ -94,7 +78,7 @@ const PreviewPanel = ({ uuid, title }: PreviewPanelProps) => {
   const RenderContents = useMemo(() => {
     return (
       <>
-        {previewList.map(preview => (
+        {previewList.map((preview) => (
           <QuestionItem key={preview.uuid}>
             <ItemHeader>
               <QuestionInfo>
@@ -113,18 +97,12 @@ const PreviewPanel = ({ uuid, title }: PreviewPanelProps) => {
 
   return (
     <PanelContainer isOpen={isOpen}>
-      <ToggleButton onClick={handleOpenSidePanel}>
-        뉴스
-      </ToggleButton>
       <PanelLayer>
         <PanelHeader>
           {RenderHeader}
-          <IconButton onClick={handleCloseSidePanel}>
-          </IconButton>
+          <IconButton onClick={handleCloseSidePanel}></IconButton>
         </PanelHeader>
-        <PanelContents>
-          {RenderContents}
-        </PanelContents>
+        <PanelContents>{RenderContents}</PanelContents>
       </PanelLayer>
     </PanelContainer>
   );
@@ -144,7 +122,6 @@ const Title = styled.h2`
   font-size: 30px;
   color: ${palette.gray900};
 `;
-
 
 const PanelContents = styled.div`
   display: flex;
@@ -198,8 +175,6 @@ const QuestionDescription = styled.div`
   text-overflow: ellipsis;
 `;
 
-
-
 const QuestionItem = styled.a`
   display: flex;
   flex-direction: column;
@@ -212,12 +187,11 @@ const QuestionItem = styled.a`
   cursor: pointer;
   text-decoration: none;
 
-  &:hover{
+  &:hover {
     /* transform: scale(0.99); */
     opacity: 0.8;
   }
 `;
-
 
 const PanelHeader = styled.div`
   display: flex;

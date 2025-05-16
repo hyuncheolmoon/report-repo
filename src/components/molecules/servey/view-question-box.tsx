@@ -1,64 +1,80 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { TextInput, Select } from '@/components/atoms';
-import { QuestionContainer } from '../../../assets/styled/servey';
+import { QuestionContainer, QuestionContents, QuestionHeader, Required } from '../../../assets/styled/servey';
 
-import { Question, QuestionType } from '@/types/survey';
+import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types/survey';
+
+import ViewOptionItem from './view-option-item';
 
 import { palette } from '@/constants';
 
-interface QuestionBoxProps {
+type QuestionBoxProps = {
   question: Question;
-  onChange: (title: string, type: string, options: string) => void;
-}
+};
 
-const QuestionBox = ({ question, onChange }: QuestionBoxProps) => {
-  const [data, setData] = useState<Question>(question);
-
-  /*****************************************************************************
-   * ACTION
-   *****************************************************************************/
-
-  const handleChangeTitle = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setData({ ...data, title: e.target.value });
-    },
-    [data]
-  );
-
-  const handleChangeType = useCallback(
-    (value: string) => {
-      setData({ ...data, type: value as QuestionType });
-    },
-    [data]
-  );
-
+const ViewQuestionBox = ({ question }: QuestionBoxProps) => {
   /*****************************************************************************
    * RENDER
    *****************************************************************************/
 
+  const RenderTypeItem = useMemo(() => {
+    switch (question.type) {
+      case QuestionType.TEXTAREA:
+        return (
+          <QuestionContents>
+            <TextInput placeholder="답변을 입력해주세요" fullWidth />
+          </QuestionContents>
+        );
+      case QuestionType.DROPDOWN:
+        return (
+          <DropdownBox
+            defaultValue={question.options[0].id}
+            options={question.options.map((item) => ({
+              label: item.content,
+              value: item.id,
+            }))}
+          />
+        );
+      case QuestionType.CHECKBOX:
+        return <ViewOptionItem question={question} />;
+    }
+  }, [question]);
+
   return (
-    <QuestionContainer>
-      <TextInput
-        value={data.title}
-        placeholder="질문"
-        fullWidth
-        variant="standard"
-        onChange={handleChangeTitle}
-        InputProps={{
-          disableUnderline: true,
-        }}
-      />
+    <QuestionContainer id={`question-${question.id}`}>
+      <QuestionHeader>
+        <TitleWrapper>
+          {question.title}
+          {question.required && <Required />}
+        </TitleWrapper>
+      </QuestionHeader>
+      <OptionsWrapper>{RenderTypeItem}</OptionsWrapper>
     </QuestionContainer>
   );
 };
 
-export default QuestionBox;
+export default ViewQuestionBox;
 
-const SelectWrapper = styled.div`
-  width: 100%;
-  margin-top: 12px;
+const OptionsWrapper = styled.div`
+  padding: 8px 0 12px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const TitleWrapper = styled.div`
+  flex: 1 1 auto;
+  font-size: 18px;
+  font-weight: 700;
+  color: ${palette.gray900};
+`;
+
+const DropdownBox = styled(Select)`
+  min-width: 200px;
+  width: fit-content;
 `;

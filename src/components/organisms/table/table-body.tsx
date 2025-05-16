@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { palette } from '@/constants';
 import { ColumnType, TableColumn } from '@/components/organisms/table';
-import creator from './utils/creator';
 
 type TableBodyProps<T> = {
   columns: TableColumn[];
@@ -30,7 +29,7 @@ const TableBody = <T,>({ data, columns, onClick }: TableBodyProps<T>) => {
   if (!data || data.length === 0) {
     return (
       <TBody>
-        <Tr>
+        <Tr nodata={true}>
           <NoData colSpan={columns.length}>표시할 정보가 없습니다.</NoData>
         </Tr>
       </TBody>
@@ -53,16 +52,12 @@ const TableBody = <T,>({ data, columns, onClick }: TableBodyProps<T>) => {
 export default TableBody;
 const NoData = styled.td`
   font-size: 18px;
-  height: 150px;
   text-align: center;
   vertical-align: middle;
-  //padding-top: 50px;
-  //position: absolute;
-  width: 100%;
-  border: 1px solid ${palette.gray200};
+  height: 150px;
 `;
 
-const Tr = styled.tr<{ onClick?: () => void }>`
+const Tr = styled.tr<{ onClick?: () => void; nodata?: boolean }>`
   display: table-row;
   min-height: 25px;
   ${({ onClick }) =>
@@ -71,7 +66,7 @@ const Tr = styled.tr<{ onClick?: () => void }>`
     cursor: pointer;
   `}
   &:hover {
-    background-color: rgba(71, 127, 232, 0.1);
+    background-color: ${({ nodata }) => (!nodata ? 'rgba(71, 127, 232, 0.1)' : 'transparent')};
   }
 `;
 
