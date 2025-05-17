@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { RiArrowLeftLine } from 'react-icons/ri';
 import moment from 'moment';
@@ -48,7 +48,7 @@ const SurveyDetailPage = () => {
       return;
     }
     setTemplete(survey);
-  }, [setTemplete, surveyId, deleteTempServey]);
+  }, [setTemplete, surveyId, deleteTempServey, getServey, getTempServey, router, path]);
 
   useEffect(() => {
     getData();
@@ -99,7 +99,7 @@ const SurveyDetailPage = () => {
     deleteTempServey();
     reset();
     router.push('/survey');
-  }, [templete, deleteTempServey, reset, router, path]);
+  }, [templete, deleteTempServey, reset, router, path, surveyId, updateServey]);
 
   /**
    * 템플릿 리스트 페이지로 이동(뒤로가기)
@@ -115,7 +115,7 @@ const SurveyDetailPage = () => {
   const handleMovePreviewPage = useCallback(() => {
     postTempServey(templete);
     router.replace(`${path.preview}`);
-  }, [templete]);
+  }, [templete, router, path, postTempServey]);
 
   /**
    * 질문 추가
@@ -132,7 +132,7 @@ const SurveyDetailPage = () => {
         questionElement.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
-  }, [templete]);
+  }, [templete, addQuestion]);
 
   /**
    * 헤더에 포함된 정보 변경(title, description)

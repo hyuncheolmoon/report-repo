@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import SurveyPage from '../survey-page';
 import * as hooks from '@/hooks/use-storage-handler';
 import { Templete } from '@/stores/use-templete-store';

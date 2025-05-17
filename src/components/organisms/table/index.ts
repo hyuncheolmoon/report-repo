@@ -9,18 +9,16 @@ export enum ColumnType {
 }
 
 type ColumnOptions = {
-  color?: (value: any) => string;
   dateFormat?: string;
 };
 
-type TableColumn = {
+type TableColumn<T> = {
   key?: string;
   type?: ColumnType;
   title?: string;
   width?: number;
-  customText?: (value: any) => string;
   options?: ColumnOptions;
-  render?: (item: any, idx: number) => any;
+  render?: (item: T, idx: number) => React.ReactNode;
 };
 
 export type { TableColumn };

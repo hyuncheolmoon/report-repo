@@ -63,13 +63,13 @@ const SurveyPage = () => {
     [router, path]
   );
 
-  const handleOpenPreview = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>, templete: Templete) => {
-      event.stopPropagation();
-      console.log('sdfjksdf');
-    },
-    [router]
-  );
+  //const handleOpenPreview = useCallback(
+  //  (event: React.MouseEvent<HTMLButtonElement>, templete: Templete) => {
+  //    event.stopPropagation();
+  //    console.log('sdfjksdf');
+  //  },
+  //  [router]
+  //);
 
   const handleDeleteSurvey = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>, templete: Templete) => {
@@ -82,7 +82,7 @@ const SurveyPage = () => {
       setList(list.filter((item) => item.id !== templete.id));
       toast.success('삭제되었습니다.');
     },
-    [router]
+    [list, deleteServey]
   );
 
   /*****************************************************************************
@@ -95,10 +95,10 @@ const SurveyPage = () => {
         <RiDeleteBinLine />
       </DeleteBtn>
     ),
-    [router]
+    [handleDeleteSurvey]
   );
 
-  const columns: TableColumn[] = useMemo(
+  const columns: TableColumn<Templete>[] = useMemo(
     () => [
       { key: 'id', title: 'ID' },
       { key: 'subject', title: '제목' },

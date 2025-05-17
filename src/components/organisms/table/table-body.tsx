@@ -8,7 +8,7 @@ import { ColumnType, TableColumn } from '@/components/organisms/table';
 import { palette } from '@/constants';
 
 type TableBodyProps<T> = {
-  columns: TableColumn[];
+  columns: TableColumn<T>[];
   data: Array<T>;
   onClick?: (item: T) => void;
 };
@@ -23,7 +23,8 @@ const TableBody = <T,>({ data, columns, onClick }: TableBodyProps<T>) => {
         if (column.render) {
           return column.render(item, idx as number);
         }
-        return item[column.key as keyof T] ?? '';
+        const value = item[column.key as keyof T];
+        return value !== undefined && value !== null ? String(value) : '';
       });
     });
   }, [columns, data]);

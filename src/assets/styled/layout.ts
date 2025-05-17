@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { palette } from '@/constants';
 
 export const PageHeader = styled.div`
   font-size: 24px;

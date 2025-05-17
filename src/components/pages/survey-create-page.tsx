@@ -58,7 +58,6 @@ const SurveyCreatePage = () => {
         postTempServey(newTemplete);
       }
     );
-
     return () => unsub();
   }, []);
 
@@ -96,7 +95,7 @@ const SurveyCreatePage = () => {
     toast.success('설문이 생성 되었습니다.');
     reset();
     router.push('/survey');
-  }, [templete]);
+  }, [templete, router, reset, postServey]);
 
   /**
    * 질문 추가
@@ -115,7 +114,7 @@ const SurveyCreatePage = () => {
         questionElement.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
-  }, [templete]);
+  }, [templete, addQuestion]);
 
   /**
    * 미리보기 페이지로 이동
@@ -123,11 +122,11 @@ const SurveyCreatePage = () => {
   const handleMovePreviewPage = useCallback(() => {
     postTempServey(templete);
     router.replace(`${path.preview}`);
-  }, [templete]);
+  }, [templete, router, path, postTempServey]);
 
   const handleMoveSurveyPage = useCallback(() => {
     router.replace(path.main);
-  }, []);
+  }, [router, path]);
 
   const handleChangeHeader = useCallback(
     (subject: string, description: string) => {

@@ -85,7 +85,7 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
         </ItemText>
       </ListItem>
     ),
-    [handleChangeContent, handleRemoveItem]
+    [question, handleChangeContent, handleRemoveItem]
   );
 
   return (

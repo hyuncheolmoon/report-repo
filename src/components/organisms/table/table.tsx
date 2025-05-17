@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 
 import { TableColumn, TableHeader, TableBody } from './index';
 
 type RootTableProps<T> = {
-  columns: TableColumn[];
+  columns: TableColumn<T>[];
   data: T[];
   onClick?: (item: T) => void;
 };
@@ -36,4 +36,3 @@ const TableLayout = styled.div`
   // min-width: 500px;
   overflow-x: auto;
 `;
-
