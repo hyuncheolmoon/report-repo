@@ -93,8 +93,8 @@ const SurveyCreatePage = () => {
     const nowDate = moment().format('YYYY-MM-DD HH:mm:ss');
     postServey({ ...templete, id: generateUUID(), createdAt: nowDate, updatedAt: nowDate });
     toast.success('설문이 생성 되었습니다.');
-    reset();
     router.push('/survey');
+    reset();
   }, [templete, router, reset, postServey]);
 
   /**

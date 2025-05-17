@@ -97,8 +97,8 @@ const SurveyDetailPage = () => {
     updateServey({ ...templete, id: surveyId as string, updatedAt: nowDate });
     toast.success('설문이 수정 되었습니다.');
     deleteTempServey();
-    reset();
     router.push('/survey');
+    reset();
   }, [templete, deleteTempServey, reset, router, path, surveyId, updateServey]);
 
   /**

@@ -1,16 +1,37 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "rules": {
     "@typescript-eslint/no-unused-vars": "warn",
-    
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-floating-promises": "warn",
+    "@typescript-eslint/no-misused-promises": "warn",
+    "@typescript-eslint/await-thenable": "warn",
+    "@typescript-eslint/no-require-imports": "off",
     "react-hooks/exhaustive-deps": "warn",
     
-    "@typescript-eslint/no-explicit-any": "warn",
-    
-    "no-console": "warn",
-    "no-debugger": "warn"
-  }
+    "import/no-duplicates": "error",
+    "@typescript-eslint/no-unused-expressions": "error",
+  },
+  "ignorePatterns": [
+    ".next/**/*",
+    "node_modules/**/*",
+    "out/**/*",
+    "public/**/*",
+    "**/*.js",
+    "**/*.mjs",
+    "**/*.cjs",
+    "**/*.jsx",
+    "**/*.d.ts",
+    "**/webpack-loaders.js",
+    "**/jest.config.js"
+  ]
 } 

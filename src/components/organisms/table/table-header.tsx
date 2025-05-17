@@ -8,11 +8,11 @@ import { TableColumn } from '@/components/organisms/table';
 
 import { palette } from '@/constants';
 
-type TableHeaderProps = {
-  columns: TableColumn[];
+type TableHeaderProps<T> = {
+  columns: TableColumn<T>[];
 };
 
-const TableHeader = ({ columns }: TableHeaderProps) => {
+const TableHeader = <T,>({ columns }: TableHeaderProps<T>) => {
   return (
     <THead>
       <Tr>

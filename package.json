@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "eslint": "eslint . --ext .ts,.tsx",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -36,6 +37,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "prettier": "^3.5.3",
