@@ -66,7 +66,7 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
 
   const renderItem = useCallback(
     (item: OptionItem, index: number) => (
-      <ListItem key={item.id}>
+      <ListItem key={item.id} data-testid={`option-item-${index}`}>
         <ItemDivison>
           {question.type === QuestionType.CHECKBOX && <RiCheckboxBlankCircleLine />}
           {question.type === QuestionType.DROPDOWN && index + 1}

@@ -14,7 +14,7 @@ type RootTableProps<T> = {
 const RootTable = <T,>({ columns, data, onClick }: RootTableProps<T>) => {
   return (
     <TableLayout>
-      <Table>
+      <Table data-testid="table">
         <TableHeader columns={columns} />
         <TableBody columns={columns} data={data} onClick={onClick} />
       </Table>

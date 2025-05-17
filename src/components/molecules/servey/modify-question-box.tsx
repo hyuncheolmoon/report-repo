@@ -8,6 +8,7 @@ import { TextInput, Select } from '@/components/atoms';
 import { QuestionItemBox, QuestionContents, QuestionHeader } from '@/assets/styled/servey';
 
 import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types/survey';
+import { useConfirmDialog } from '@/contexts/confirm-context';
 
 import ModifyOptionItem from './modify-option-item';
 
@@ -15,6 +16,7 @@ import { palette } from '@/constants';
 import { generateUUID } from '@/utils';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { useTempleteStore } from '@/stores/use-templete-store';
+
 
 import { toast } from '@/utils';
 
@@ -24,6 +26,7 @@ type QuestionBoxProps = {
 
 const QuestionBox = ({ question }: QuestionBoxProps) => {
   const { templete, changeQuestion, deleteQuestion } = useTempleteStore();
+  const { confirm } = useConfirmDialog();
 
   /**
    * 타입 리스트
@@ -39,7 +42,7 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
    * ACTION
    *****************************************************************************/
   /**
-   * 첫번째 새로운 옵션 생성 및 반환 
+   * 첫번째 새로운 옵션 생성 및 반환
    */
   const getNewOptions: (data: Question) => OptionItem[] = useCallback((data) => {
     const newOptions = data.options.length > 0 ? data.options : [{ id: generateUUID(), content: `옵션 1` }];
@@ -97,17 +100,17 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
   /**
    * 질문 삭제
    */
-  const handleDeleteQuestion = useCallback(() => {
+  const handleDeleteQuestion = useCallback(async () => {
     if (templete.questions.length === 1) {
       toast.error('한가지 이상의 질문이 필요합니다.');
       return;
     }
-    const confirm = window.confirm('삭제하시겠습니까?');
-    if (!confirm) {
+    const isConfirmed = await confirm('삭제하시겠습니까?');
+    if (!isConfirmed) {
       return;
     }
     deleteQuestion(question.id);
-  }, [templete, question, deleteQuestion]);
+  }, [templete, question, deleteQuestion, confirm]);
 
   /*****************************************************************************
    * RENDER
@@ -132,28 +135,37 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
       <QuestionHeader>
         <TitleInputBox>
           <TextInput
-            name={`question-title-${question.id}`}
+            id={`question-title-${question.id}`}
+            data-testid={`question-title-${question.id}`}
             defaultValue={question.title}
             placeholder="질문"
             fullWidth
-            //inputProps={{
-            //  maxLength: 80,
-            //}}
             onBlur={handleChangeTitle}
           />
         </TitleInputBox>
 
         <SelectTypeWrapper>
-          <Select value={question.type} onChange={handleChangeType} fullWidth options={typeList} />
+          <Select
+            data-testid={`question-type-${question.id}`}
+            value={question.type}
+            onChange={handleChangeType}
+            fullWidth
+            options={typeList}
+          />
         </SelectTypeWrapper>
       </QuestionHeader>
       <OptionsWrapper>{RenderTypeItem}</OptionsWrapper>
       <QuestionFooter>
         <RequiredBox>
           <span>필수</span>
-          <Switch checked={question.required} onChange={handleChangeRequired} />
+          <Switch
+            inputProps={{ 'aria-label': 'test-switch' }}
+            checked={question.required}
+            onChange={handleChangeRequired}
+          />
+          <input data-testid='test-hidden' type="hidden" value={question.required? 'true': 'false'} />
         </RequiredBox>
-        <DeleteBtn onClick={handleDeleteQuestion}>
+        <DeleteBtn data-testid={`question-delete-${question.id}`} onClick={handleDeleteQuestion}>
           <RiDeleteBinLine />
         </DeleteBtn>
       </QuestionFooter>

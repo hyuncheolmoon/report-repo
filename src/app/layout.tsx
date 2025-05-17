@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 
 import { Navigation, MainHeader } from '@/components';
 import { size } from '@/constants';
+import { ConfirmProvider } from '@/contexts/confirm-context';
 
 import '@/assets/scss/index.scss';
 import { usePathHandler } from '@/hooks';
@@ -19,12 +20,14 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <ToastContainer />
-        <MainHeader />
-        <ContentContainer>
-          {showNavbar && <Navigation />}
-          <MainContainer>{children}</MainContainer>
-        </ContentContainer>
+        <ConfirmProvider>
+          <ToastContainer />
+          <MainHeader />
+          <ContentContainer>
+            {showNavbar && <Navigation />}
+            <MainContainer>{children}</MainContainer>
+          </ContentContainer>
+        </ConfirmProvider>
       </body>
     </html>
   );

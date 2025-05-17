@@ -1,14 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
 import { RiDeleteBinLine } from 'react-icons/ri';
 
 import { usePathHandler, useStorageHandler } from '@/hooks';
 import { Templete } from '@/stores';
+import { useConfirmDialog } from '@/contexts/confirm-context';
 
-import { Button, IconButton } from '@mui/material';
+import { Button, debounce, IconButton } from '@mui/material';
 import { RootTable, TableColumn } from '@/components/organisms/table';
 
 import { FullPageLayout, PageContent, PageHeader } from '@/assets/styled';
@@ -19,10 +20,11 @@ const SurveyPage = () => {
   const router = useRouter();
   const { path } = usePathHandler();
   const { getServeyList, deleteServey, deleteTempServey } = useStorageHandler();
+  const { confirm } = useConfirmDialog();
 
   const [list, setList] = useState<Templete[]>([]);
   const [filterList, setFilterList] = useState<Templete[]>([]);
-  const [keyword, setKeyword] = useState<string>('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   /*****************************************************************************
    * INIT
@@ -43,13 +45,18 @@ const SurveyPage = () => {
    * ACTION
    *****************************************************************************/
 
+  /**
+   * 키워드 검색을 통한 필터링
+   */
   const handleChangeKeyword = useCallback(
-    (keyword: string) => {
-      setKeyword(keyword);
+    debounce((keyword: string) => {
+      if (!searchInputRef.current) {
+        return;
+      }
       const newList = list.filter((item) => item.subject.includes(keyword));
       setFilterList(newList);
-    },
-    [list]
+    }, 300),
+    [list, searchInputRef]
   );
 
   const handleMoveCreateSurvey = useCallback(() => {
@@ -71,28 +78,35 @@ const SurveyPage = () => {
   //  [router]
   //);
 
+  /**
+   * 설문지 삭제
+   */
   const handleDeleteSurvey = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>, templete: Templete) => {
+    async (event: React.MouseEvent<HTMLButtonElement>, templete: Templete) => {
       event.stopPropagation();
-      const confirm = window.confirm('삭제하시겠습니까?');
-      if (!confirm) {
+      const isConfirm = await confirm('삭제하시겠습니까?');
+      if (!isConfirm) {
         return;
       }
       deleteServey(templete.id);
       setList(list.filter((item) => item.id !== templete.id));
+      setFilterList(filterList.filter((item) => item.id !== templete.id));
       toast.success('삭제되었습니다.');
     },
-    [list, deleteServey]
+    [list, filterList, deleteServey, confirm]
   );
 
   /*****************************************************************************
    * RENDER
    *****************************************************************************/
 
+  /**
+   * 삭제 버튼
+   */
   const renderDeleteBtn = useCallback(
     (templete: Templete) => (
       <BtnGroup>
-        <DeleteBtn name="delete-btn" onClick={(event) => handleDeleteSurvey(event, templete)}>
+        <DeleteBtn data-testid="survey-delete-btn" onClick={(event) => handleDeleteSurvey(event, templete)}>
           <RiDeleteBinLine />
         </DeleteBtn>
       </BtnGroup>
@@ -100,6 +114,9 @@ const SurveyPage = () => {
     [handleDeleteSurvey]
   );
 
+  /**
+   * 테이블 컬럼 설정
+   */
   const columns: TableColumn<Templete>[] = useMemo(
     () => [
       { key: 'id', title: 'ID' },
@@ -124,11 +141,12 @@ const SurveyPage = () => {
       <PageContent>
         <TableContainer>
           <TableHeader>
-            <TotalCount>설문지: {list.length} 개</TotalCount>
+            <TotalCount data-testid="survey-total-count">설문지: {list.length} 개</TotalCount>
             <SearchInput
+              data-testid="search-input"
               placeholder="검색어를 입력하세요"
               onChange={(e) => handleChangeKeyword(e.target.value)}
-              value={keyword}
+              ref={searchInputRef}
             />
           </TableHeader>
           <RootTable columns={columns} data={filterList} onClick={handleMoveDetailSurvey} />

@@ -1,4 +1,3 @@
-import PreviewPanel from './preview-panel';
-export { PreviewPanel };
-
-
+import SurveyTemplete from './survey-templete';
+// import PreviewPanel from './preview-panel';
+export { SurveyTemplete };

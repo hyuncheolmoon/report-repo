@@ -6,29 +6,18 @@ import moment from 'moment';
 
 import { RiArrowLeftLine } from 'react-icons/ri';
 import { Button } from '@mui/material';
-import {
-  FullPageLayout,
-  PageContent,
-  PageHeader,
-  ContentLayer,
-  SurveyContainer,
-  FloatingArea,
-  FloatingButton,
-  BackButton,
-  RightBtnGroup,
-} from '@/assets/styled';
+import { FullPageLayout, PageContent, PageHeader, BackButton, RightBtnGroup } from '@/assets/styled';
 
 import { usePathHandler } from '@/hooks';
 import useStorageHandler from '@/hooks/use-storage-handler';
 import { useTempleteStore } from '@/stores/use-templete-store';
 
-import { ModifyQuestionBox, ModifyTitleBox } from '@/components/molecules';
-
 import { toast, generateUUID } from '@/utils';
+import { SurveyTemplete } from '../templete';
 
 const SurveyCreatePage = () => {
   const router = useRouter();
-  const { templete, setTemplete, createTemplete, changeSubject, addQuestion, reset } = useTempleteStore();
+  const { templete, setTemplete, createTemplete, reset } = useTempleteStore();
   const { postServey, getTempServey, postTempServey } = useStorageHandler();
   const { path } = usePathHandler();
 
@@ -98,25 +87,6 @@ const SurveyCreatePage = () => {
   }, [templete, router, reset, postServey]);
 
   /**
-   * 질문 추가
-   */
-  const handleAddQuestion = useCallback(() => {
-
-    if(templete.questions.length >= 20) {
-      toast.error('질문은 최대 20개까지만 생성 가능합니다.');
-      return;
-    }
-
-    const newData = addQuestion();
-    setTimeout(() => {
-      const questionElement = document.getElementById(`question-${newData.id}`);
-      if (questionElement) {
-        questionElement.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  }, [templete, addQuestion]);
-
-  /**
    * 미리보기 페이지로 이동
    */
   const handleMovePreviewPage = useCallback(() => {
@@ -127,13 +97,6 @@ const SurveyCreatePage = () => {
   const handleMoveSurveyPage = useCallback(() => {
     router.replace(path.main);
   }, [router, path]);
-
-  const handleChangeHeader = useCallback(
-    (subject: string, description: string) => {
-      changeSubject(subject, description);
-    },
-    [changeSubject]
-  );
 
   /*****************************************************************************
    * RENDER
@@ -158,23 +121,8 @@ const SurveyCreatePage = () => {
       </PageHeader>
 
       <PageContent>
-        <SurveyContainer>
-          <ContentLayer>
-            <ModifyTitleBox
-              subject={templete.subject}
-              description={templete.description}
-              onChange={handleChangeHeader}
-            />
-            {templete.questions.map((question) => (
-              <ModifyQuestionBox key={question.id} question={question} />
-            ))}
-          </ContentLayer>
-        </SurveyContainer>
+        <SurveyTemplete />
       </PageContent>
-
-      <FloatingArea>
-        <FloatingButton onClick={handleAddQuestion}>+</FloatingButton>
-      </FloatingArea>
     </FullPageLayout>
   );
 };

@@ -28,41 +28,53 @@ const useStorageHandler = () => {
       console.error(error);
       return [];
     }
-  }, []);
+  }, [_get]);
 
-  const getServey = useCallback((id: string) => {
-    const list = _get();
-    return list.find((item: Templete) => item.id === id);
-  }, []);
-
-  const postServey = useCallback((templete: Templete) => {
-    try {
+  const getServey = useCallback(
+    (id: string) => {
       const list = _get();
-      _save([...list, templete]);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+      return list.find((item: Templete) => item.id === id);
+    },
+    [_get]
+  );
 
-  const deleteServey = useCallback((id: string) => {
-    try {
-      const list = _get();
-      const newList = list.filter((item: Templete) => item.id !== id);
-      _save(newList);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const postServey = useCallback(
+    (templete: Templete) => {
+      try {
+        const list = _get();
+        _save([...list, templete]);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [_get, _save]
+  );
 
-  const updateServey = useCallback((templete: Templete) => {
-    try {
-      const list = _get();
-      const newList = list.map((item: Templete) => (item.id === templete.id ? templete : item));
-      _save(newList);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const deleteServey = useCallback(
+    (id: string) => {
+      try {
+        const list = _get();
+        const newList = list.filter((item: Templete) => item.id !== id);
+        _save(newList);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [_get, _save]
+  );
+
+  const updateServey = useCallback(
+    (templete: Templete) => {
+      try {
+        const list = _get();
+        const newList = list.map((item: Templete) => (item.id === templete.id ? templete : item));
+        _save(newList);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [_get, _save]
+  );
 
   /******************************************************************************
    * TEMP

@@ -49,14 +49,15 @@ const ModifyTitleBox = ({ subject, description, onChange }: ModifyTitleBoxProps)
   return (
     <QuestionItemBox>
       <TitleTextInput
+        data-testid="survey-subject"
         defaultValue={subject}
-        name="survey-subject"
         placeholder="제목 없는 설문지"
         fullWidth
         variant="standard"
         onBlur={handleChangeTitle}
       />
       <DescTextInput
+        data-testid="survey-description"
         defaultValue={description}
         placeholder="설문지 설명"
         fullWidth

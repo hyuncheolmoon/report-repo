@@ -6,28 +6,18 @@ import { RiArrowLeftLine } from 'react-icons/ri';
 import moment from 'moment';
 
 import { Button } from '@mui/material';
-import {
-  FullPageLayout,
-  PageContent,
-  PageHeader,
-  ContentLayer,
-  SurveyContainer,
-  FloatingArea,
-  FloatingButton,
-  BackButton,
-  RightBtnGroup,
-} from '@/assets/styled';
+import { FullPageLayout, PageContent, PageHeader, BackButton, RightBtnGroup } from '@/assets/styled';
 
 import { usePathHandler, useStorageHandler } from '@/hooks';
 import { useTempleteStore } from '@/stores/use-templete-store';
 
-import { ModifyQuestionBox, ModifyTitleBox } from '@/components/molecules';
+import { SurveyTemplete } from '@/components/templete';
 
 import { toast } from '@/utils';
 
 const SurveyDetailPage = () => {
   const router = useRouter();
-  const { templete, setTemplete, changeSubject, addQuestion, reset } = useTempleteStore();
+  const { templete, setTemplete, reset } = useTempleteStore();
 
   const { surveyId } = useParams();
 
@@ -48,7 +38,7 @@ const SurveyDetailPage = () => {
       return;
     }
     setTemplete(survey);
-  }, [setTemplete, surveyId, deleteTempServey, getServey, getTempServey, router, path]);
+  }, [setTemplete, surveyId, getServey, getTempServey, router, path]);
 
   useEffect(() => {
     getData();
@@ -99,7 +89,7 @@ const SurveyDetailPage = () => {
     deleteTempServey();
     router.push('/survey');
     reset();
-  }, [templete, deleteTempServey, reset, router, path, surveyId, updateServey]);
+  }, [templete, deleteTempServey, reset, router, surveyId, updateServey]);
 
   /**
    * 템플릿 리스트 페이지로 이동(뒤로가기)
@@ -116,33 +106,6 @@ const SurveyDetailPage = () => {
     postTempServey(templete);
     router.replace(`${path.preview}`);
   }, [templete, router, path, postTempServey]);
-
-  /**
-   * 질문 추가
-   */
-  const handleAddQuestion = useCallback(() => {
-    if (templete.questions.length >= 20) {
-      toast.error('질문은 최대 20개까지만 생성 가능합니다.');
-      return;
-    }
-    const newData = addQuestion();
-    setTimeout(() => {
-      const questionElement = document.getElementById(`question-${newData.id}`);
-      if (questionElement) {
-        questionElement.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  }, [templete, addQuestion]);
-
-  /**
-   * 헤더에 포함된 정보 변경(title, description)
-   */
-  const handleChangeHeader = useCallback(
-    (title: string, description: string) => {
-      changeSubject(title, description);
-    },
-    [changeSubject]
-  );
 
   /*****************************************************************************
    * RENDER
@@ -170,23 +133,8 @@ const SurveyDetailPage = () => {
       </PageHeader>
 
       <PageContent>
-        <SurveyContainer>
-          <ContentLayer>
-            <ModifyTitleBox
-              subject={templete.subject}
-              description={templete.description}
-              onChange={handleChangeHeader}
-            />
-            {templete.questions.map((question) => (
-              <ModifyQuestionBox key={question.id} question={question} />
-            ))}
-          </ContentLayer>
-        </SurveyContainer>
+        <SurveyTemplete />
       </PageContent>
-
-      <FloatingArea>
-        <FloatingButton onClick={handleAddQuestion}>+</FloatingButton>
-      </FloatingArea>
     </FullPageLayout>
   );
 };

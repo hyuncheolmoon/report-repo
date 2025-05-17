@@ -22,7 +22,7 @@ const SurveyPreviewPage = () => {
   const getData = useCallback(() => {
     const survey = getTempServey();
     setTemplete(survey);
-  }, []);
+  }, [getTempServey]);
 
   useEffect(() => {
     getData();
