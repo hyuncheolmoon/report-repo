@@ -91,9 +91,11 @@ const SurveyPage = () => {
 
   const renderDeleteBtn = useCallback(
     (templete: Templete) => (
-      <DeleteBtn name='delete-btn' onClick={(event) => handleDeleteSurvey(event, templete)}>
-        <RiDeleteBinLine />
-      </DeleteBtn>
+      <BtnGroup>
+        <DeleteBtn name="delete-btn" onClick={(event) => handleDeleteSurvey(event, templete)}>
+          <RiDeleteBinLine />
+        </DeleteBtn>
+      </BtnGroup>
     ),
     [handleDeleteSurvey]
   );
@@ -138,12 +140,19 @@ const SurveyPage = () => {
 export default SurveyPage;
 
 const DeleteBtn = styled(IconButton)`
-  min-width: 100px;
   display: flex;
   align-items: center;
   font-size: 20px;
   color: ${palette.red700};
 `;
+
+const BtnGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+`;
+
 const SearchInput = styled.input`
   width: 300px;
   padding: 8px 18px;
