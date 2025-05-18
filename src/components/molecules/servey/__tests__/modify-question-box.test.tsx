@@ -3,9 +3,15 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModifyQuestionBox from '../modify-question-box';
 import { QuestionType } from '@/types';
+import { useTempleteStore } from '@/stores/use-templete-store';
+import { toast } from '@/utils';
 
 const mockConfirm = jest.fn(() => Promise.resolve(true));
 const mockDeleteQuestion = jest.fn();
+
+jest.mock('@/stores/use-templete-store', () => ({
+  useTempleteStore: jest.fn(),
+}));
 
 jest.mock('@/utils', () => ({
   toast: {
@@ -18,10 +24,6 @@ jest.mock('@/contexts/confirm-context', () => ({
   useConfirmDialog: () => ({
     confirm: mockConfirm,
   }),
-}));
-
-jest.mock('@/stores/use-templete-store', () => ({
-  useTempleteStore: jest.fn(),
 }));
 
 describe('질문 추가 및 삭제(ModifyQuestionBox)', () => {
@@ -39,8 +41,7 @@ describe('질문 추가 및 삭제(ModifyQuestionBox)', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    const { useTempleteStore } = require('@/stores/use-templete-store');
-    useTempleteStore.mockReturnValue({
+    (useTempleteStore as unknown as jest.Mock).mockReturnValue({
       templete: {
         questions: [defaultQuestion],
       },
@@ -79,8 +80,7 @@ describe('질문 추가 및 삭제(ModifyQuestionBox)', () => {
 
   describe('질문 삭제', () => {
     it('삭제', async () => {
-      const { useTempleteStore } = require('@/stores/use-templete-store');
-      useTempleteStore.mockReturnValue({
+      (useTempleteStore as unknown as jest.Mock).mockReturnValue({
         templete: {
           questions: [defaultQuestion, { ...defaultQuestion, id: '2', title: '두 번째 질문' }],
         },
@@ -105,15 +105,13 @@ describe('질문 추가 및 삭제(ModifyQuestionBox)', () => {
 
       await userEvent.click(deleteButton);
 
-      const { toast } = require('@/utils');
       expect(toast.error).toHaveBeenCalledWith('한가지 이상의 질문이 필요합니다.');
       expect(mockDeleteQuestion).not.toHaveBeenCalled();
     });
 
     it('삭제 취소', async () => {
       mockConfirm.mockResolvedValueOnce(false);
-      const { useTempleteStore } = require('@/stores/use-templete-store');
-      useTempleteStore.mockReturnValue({
+      (useTempleteStore as unknown as jest.Mock).mockReturnValue({
         templete: {
           questions: [defaultQuestion, { ...defaultQuestion, id: '2', title: '두 번째 질문' }],
         },

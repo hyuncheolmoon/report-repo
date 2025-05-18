@@ -6,7 +6,15 @@ import { RiArrowLeftLine } from 'react-icons/ri';
 import moment from 'moment';
 
 import { Button } from '@mui/material';
-import { FullPageLayout, PageContent, PageHeader, BackButton, RightBtnGroup, Loading } from '@/assets/styled';
+import {
+  FullPageLayout,
+  PageContent,
+  PageHeader,
+  LeftBtnGroup,
+  RightBtnGroup,
+  BackButton,
+  Loading,
+} from '@/assets/styled';
 
 import { usePathHandler, useStorageHandler } from '@/hooks';
 import { useTempleteStore } from '@/stores/use-templete-store';
@@ -121,10 +129,12 @@ const SurveyDetailPage = () => {
   return (
     <FullPageLayout>
       <PageHeader>
-        <BackButton variant="text" color="primary" onClick={handleMoveSurveyPage}>
-          <RiArrowLeftLine />
+        <LeftBtnGroup>
+          <BackButton onClick={handleMoveSurveyPage}>
+            <RiArrowLeftLine />
+          </BackButton>
           템플릿 상세
-        </BackButton>
+        </LeftBtnGroup>
         <RightBtnGroup>
           <Button variant="contained" color="primary" onClick={handleMovePreviewPage} disabled={isLoading}>
             미리보기

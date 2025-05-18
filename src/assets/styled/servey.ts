@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { palette } from '@/constants';
-import { IconButton, Button, CircularProgress } from '@mui/material';
+import { IconButton, CircularProgress } from '@mui/material';
 
 export const QuestionItemBox = styled.div`
   display: flex;
@@ -61,13 +61,10 @@ export const SurveyContainer = styled.div`
   min-height: 100%;
 `;
 
-export const BackButton = styled(Button)`
+export const BackButton = styled(IconButton)`
   color: ${palette.gray900};
   font-size: 18px;
   font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
 `;
 
 export const Required = styled.span`
@@ -81,6 +78,12 @@ export const Required = styled.span`
   }
 `;
 
+export const LeftBtnGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 20px;
+`;
 export const RightBtnGroup = styled.div`
   display: flex;
   gap: 10px;

@@ -5,7 +5,6 @@ import ModifyOptionItem from '../modify-option-item';
 import { useTempleteStore } from '@/stores/use-templete-store';
 import { QuestionType } from '@/types';
 
-// Mock the store
 jest.mock('@/stores/use-templete-store', () => ({
   useTempleteStore: jest.fn(),
 }));

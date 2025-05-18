@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
-import { RiDeleteBinLine } from 'react-icons/ri';
+import { RiDeleteBinLine, RiEyeLine } from 'react-icons/ri';
 
 import { usePathHandler, useStorageHandler } from '@/hooks';
 import { Survey } from '@/types';
@@ -15,6 +15,7 @@ import { RootTable, TableColumn } from '@/components/organisms/table';
 import { FullPageLayout, Loading, PageContent, PageHeader } from '@/assets/styled';
 import { palette } from '@/constants';
 import { toast } from '@/utils';
+import { PreviewPanel, PreviewPanelHandler } from '@/components/templete';
 
 const SurveyPage = () => {
   const router = useRouter();
@@ -26,7 +27,9 @@ const SurveyPage = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [list, setList] = useState<Survey[]>([]);
   const [filterList, setFilterList] = useState<Survey[]>([]);
+
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const previewPanelRef = useRef<PreviewPanelHandler | null>(null);
 
   /*****************************************************************************
    * INIT
@@ -67,7 +70,7 @@ const SurveyPage = () => {
     debounce((keyword: string) => {
       setKeyword(keyword);
     }, 300),
-    [list, searchInputRef]
+    []
   );
 
   const handleMoveCreateSurvey = useCallback(() => {
@@ -81,13 +84,13 @@ const SurveyPage = () => {
     [router, path]
   );
 
-  //const handleOpenPreview = useCallback(
-  //  (event: React.MouseEvent<HTMLButtonElement>, templete: Templete) => {
-  //    event.stopPropagation();
-  //    console.log('sdfjksdf');
-  //  },
-  //  [router]
-  //);
+  const handleOpenPreview = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>, templete: Survey) => {
+      event.stopPropagation();
+      previewPanelRef.current?.open(templete);
+    },
+    [previewPanelRef]
+  );
 
   /**
    * 설문지 삭제
@@ -110,6 +113,17 @@ const SurveyPage = () => {
   /*****************************************************************************
    * RENDER
    *****************************************************************************/
+
+  const renderPreviewBtn = useCallback(
+    (templete: Survey) => (
+      <BtnGroup>
+        <PreviewBtn data-testid="survey-preview-btn" onClick={(event) => handleOpenPreview(event, templete)}>
+          <RiEyeLine />
+        </PreviewBtn>
+      </BtnGroup>
+    ),
+    [handleOpenPreview]
+  );
 
   /**
    * 삭제 버튼
@@ -136,8 +150,9 @@ const SurveyPage = () => {
       { key: 'createdAt', title: '생성일' },
       { key: 'updatedAt', title: '수정일' },
       { title: '삭졔', render: renderDeleteBtn },
+      { title: '미리보기', render: renderPreviewBtn },
     ],
-    [renderDeleteBtn]
+    [renderDeleteBtn, renderPreviewBtn]
   );
 
   return (
@@ -163,6 +178,7 @@ const SurveyPage = () => {
           {isLoading ? <Loading /> : <RootTable columns={columns} data={filterList} onClick={handleMoveDetailSurvey} />}
         </TableContainer>
       </PageContent>
+      <PreviewPanel ref={previewPanelRef} />
     </FullPageLayout>
   );
 };
@@ -173,6 +189,13 @@ const DeleteBtn = styled(IconButton)`
   align-items: center;
   font-size: 20px;
   color: ${palette.red700};
+`;
+
+const PreviewBtn = styled(IconButton)`
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  color: ${palette.blue700};
 `;
 
 const BtnGroup = styled.div`

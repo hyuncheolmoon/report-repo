@@ -7,7 +7,15 @@ import moment from 'moment';
 import { RiArrowLeftLine } from 'react-icons/ri';
 
 import { Button } from '@mui/material';
-import { FullPageLayout, PageContent, PageHeader, BackButton, RightBtnGroup, Loading } from '@/assets/styled';
+import {
+  FullPageLayout,
+  PageContent,
+  PageHeader,
+  BackButton,
+  LeftBtnGroup,
+  RightBtnGroup,
+  Loading,
+} from '@/assets/styled';
 
 import { usePathHandler } from '@/hooks';
 import useStorageHandler from '@/hooks/use-storage-handler';
@@ -106,10 +114,12 @@ const SurveyCreatePage = () => {
   return (
     <FullPageLayout>
       <PageHeader>
-        <BackButton variant="text" color="primary" onClick={handleMoveSurveyPage}>
-          <RiArrowLeftLine />
+        <LeftBtnGroup>
+          <BackButton onClick={handleMoveSurveyPage}>
+            <RiArrowLeftLine />
+          </BackButton>
           템플릿 생성
-        </BackButton>
+        </LeftBtnGroup>
 
         <RightBtnGroup>
           <Button variant="contained" color="primary" onClick={handleMovePreviewPage} disabled={isLoading}>

@@ -8,7 +8,15 @@ import { usePathHandler, useStorageHandler } from '@/hooks';
 import { Survey } from '@/types';
 
 import { ViewQuestionBox, ViewTitleBox } from '@/components/molecules';
-import { FullPageLayout, PageContent, PageHeader, ContentLayer, SurveyContainer, BackButton } from '@/assets/styled';
+import {
+  FullPageLayout,
+  PageContent,
+  PageHeader,
+  ContentLayer,
+  SurveyContainer,
+  LeftBtnGroup,
+  BackButton,
+} from '@/assets/styled';
 
 const SurveyPreviewPage = () => {
   const router = useRouter();
@@ -54,10 +62,12 @@ const SurveyPreviewPage = () => {
   return (
     <FullPageLayout>
       <PageHeader>
-        <BackButton variant="text" color="primary" onClick={handleMoveDetailPage}>
-          <RiArrowLeftLine />
+        <LeftBtnGroup>
+          <BackButton onClick={handleMoveDetailPage}>
+            <RiArrowLeftLine />
+          </BackButton>
           미리보기
-        </BackButton>
+        </LeftBtnGroup>
       </PageHeader>
 
       <PageContent>
