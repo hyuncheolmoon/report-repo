@@ -1,36 +1,191 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# REPORT-REPO 
 
-## Getting Started
+이 프로젝트는 설문지 관리를 위한 인터페이스를 제공하는 Next.js 기반의 React 애플리케이션입니다.
 
-First, run the development server:
+## 기술 스택
 
+- Node 20이상 (개발 버전: v22.9.0 )
+- Next.js 15.3.2
+- React 19
+- TypeScript
+- SASS
+- Jest (테스트)
+
+### 기타 라이브러리
+
+#### UI/UX 관련
+- **Material UI & Emotion**
+  - 최소 단위의 기본 컴포넌트(input, button 등)를 제공하여 개발 생산성 향상
+  - 커스텀 스타일링을 위한 유연한 스타일 시스템 제공
+  - 일관된 디자인 시스템 구축 가능
+
+- **React Icons**
+  - 가독성 향상을 위한 기본 아이콘 제공
+  - 다양한 아이콘 세트 지원으로 확장성 확보
+  - 직관적인 UI/UX 구현에 기여
+
+- **React Toastify**
+  - 기본 alert 대신 UX 관점에서 더 효율적인 알림 시스템 제공
+  - 사용자 친화적인 알림 메시지 표시
+  - 커스터마이징 가능한 토스트 메시지 컴포넌트
+
+#### 상태 관리
+- **Zustand**
+  - 사용성과 가독성이 뛰어난 상태 관리 솔루션
+  - 간단한 API로 빠른 개발 가능
+  - Props Drilling 문제 해결
+  - 중앙화된 상태 관리로 코드 유지보수성 향상
+
+#### 유틸리티
+- **Moment.js**
+  - 날짜 출력 및 타임존 관리(향후 확장을 위한 설계)
+  - 다양한 날짜 포맷팅 옵션 지원
+
+## 필요 조건
+
+- Node.js (최신 LTS 버전 권장)
+- Yarn 또는 npm 패키치 관리자
+- Docker Desktop 설치
+
+## 프로젝트 설정
+
+1. 저장소 복제:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone [repository-url]
+cd report-repo
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. 의존성 설치:
+```bash
+yarn install
+# 또는
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 애플리케이션 실행
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 개발 모드
 
-## Learn More
+개발 모드로 애플리케이션을 실행하려면:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+yarn dev
+# 또는
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`http://localhost:8000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+### Docker
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Docker를 사용하여 애플리케이션을 실행하려면:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+yarn docker
+# 또는
+npm run docker
+```
+
+## 사용 가능한 명령어
+
+- `yarn dev` - Turbopack을 사용하여 개발 서버 시작
+- `yarn lint` - ESLint를 사용한 코드 품질 검사
+- `yarn test` - Jest 테스트 실행
+- `yarn test:watch` - Jest 테스트 감시 모드 실행
+- `yarn docker` - Docker를 사용하여 애플리케이션 실행
+
+## 개발 도구
+
+- ESLint - 코드 린팅
+- Prettier - 코드 포맷팅
+- TypeScript - 타입 안정성
+- Jest - 테스트
+
+## 프로젝트 구조
+
+```
+report-repo/
+├── src/              # 소스 파일
+├── public/           # 정적 파일
+├── .next/            # Next.js 빌드 결과물
+└── node_modules/     # 의존성
+```
+
+## 디렉토리 구조
+
+```
+src/
+├── components/    # 공통 컴포넌트 (아토믹 디자인 패턴 적용)
+├── pages/        # 라우터 기반 페이지 컴포넌트
+├── hooks/        # 공용 커스텀 훅
+├── stores/       # Zustand 상태 관리 로직
+├── utils/        # 공통 유틸리티 함수
+├── types/        # 공용 타입 정의
+└── assets/       # 디자인 리소스
+```
+
+### 아키텍처 설계
+
+#### 컴포넌트 구조
+- **아토믹 디자인 패턴**을 채택하여 컴포넌트를 관리합니다.
+- 초기에는 DDD 패턴을 고려했으나, 프로젝트 규모와 특성을 고려하여 단일 컴포넌트 폴더에서 아토믹 패턴으로 전환했습니다.
+- Props 의존성을 제거하기 위해 Zustand를 도입하여 상태 관리를 중앙화했습니다.
+
+#### 템플릿 관리 구조
+템플릿 관련 페이지는 다음과 같은 계층 구조로 설계되었습니다:
+```
+Page
+└── Template (Header + Question)
+    └── Question
+        └── Options
+```
+
+#### 상태 관리
+- Template(생성, 상세, 미리보기) 영역의 데이터는 Zustand store를 통해 통합 관리됩니다.
+- Question에 대한 관리(생성, 조회, 수정, 삭제) 로직을 store에 집중시켜 관리합니다.
+- 컴포넌트 간 props drilling을 최소화하고, 불필요한 리렌더링을 방지합니다.
+
+#### 코드 구조화 원칙
+- 기능별 분리가 필요한 경우에만 컴포넌트를 분리합니다.
+- 단순한 렌더링 로직은 함수형 컴포넌트 내부에서 처리합니다.
+- 공통 사용 비즈니스 로직은 hooks나 utils로 분리하여 관리합니다.
+
+## 페이지 구조
+
+### 페이지 구성
+프로젝트는 다음과 같은 4가지 주요 페이지로 구성되어 있습니다:
+
+1. **관리 페이지 (리스트형)**
+   - 네비게이션 바를 포함한 테이블 형태의 데이터 출력
+   - 설문지 타입 관리 및 삭제된 페이지 관리 기능
+   - 주요 기능:
+     - 새 설문지 작성 페이지 이동
+     - 설문지 리스트 조회
+     - 설문지 검색
+     - 설문지 삭제
+
+2. **설문지 생성 페이지**
+3. **설문지 상세 페이지 (수정 모드)**
+   - 생성 페이지와 상세 페이지는 유사한 구조를 가지며, 헤더의 버튼을 통한 비즈니스 로직만 차이가 있습니다.
+   - 주요 기능:
+     - 미리보기 페이지 이동
+     - 저장 (저장 후 관리 페이지로 이동)
+     - 설문지 제목/설명 입력
+     - 질문 관리 (생성/삭제/작성)
+     - 질문 타입 설정 (텍스트/드롭박스/체크박스)
+     - 질문 필수 여부 설정
+
+4. **미리보기 페이지**
+   - 생성 및 상세 페이지의 실시간 상태를 반영
+   - 생성 페이지와 상세 페이지 모두에서 접근 가능
+
+
+
+## 기타 의견
+
+### 네비게이션 및 UI/UX
+- 관리 페이지의 네비게이션 바는 설문지 타입 관리와 삭제된 페이지 관리 등 추가 기능을 위한 확장성을 고려하여 설계되었습니다.
+- 각 페이지는 직관적인 사용자 경험을 위해 일관된 UI/UX 패턴을 따릅니다.
+- 사용자 친화적인 인터페이스로 설문지 작성 및 관리가 용이합니다.
+- 반응형 디자인을 적용하여 다양한 디바이스에서 최적화된 사용자 경험을 제공합니다.
