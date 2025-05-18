@@ -84,6 +84,9 @@ const SurveyPage = () => {
     [router, path]
   );
 
+  /**
+   * 설문지 미리보기 side panel open
+   */
   const handleOpenPreview = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>, templete: Survey) => {
       event.stopPropagation();

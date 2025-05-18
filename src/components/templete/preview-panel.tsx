@@ -18,26 +18,34 @@ const PreviewPanel = (_: Record<string, never>, ref: React.Ref<PreviewPanelHandl
   const [isOpen, setIsOpen] = useState(false);
   const [survey, setSurvey] = useState<Survey | null>(null);
 
+  /**
+   * 패널 핸들러 
+   */
   useImperativeHandle(ref, () => ({
-    open: (surveyData: Survey) => {
-      setSurvey(surveyData);
-      setIsOpen(true);
-    },
-    close: () => {
-      setIsOpen(false);
-      setSurvey(null);
-    },
+    open: handleOpenSidePanel,
+    close: handleCloseSidePanel,
   }));
 
   /*****************************************************************************
    * ACTION / EVENT
    *****************************************************************************/
 
+  const handleOpenSidePanel = useCallback((surveyData: Survey) => {
+    setSurvey(surveyData);
+    setIsOpen(true);
+  }, []);
+
+  /**
+   * 패널 Close
+   */
   const handleCloseSidePanel = useCallback(() => {
     setIsOpen(false);
     setSurvey(null);
   }, []);
 
+  /**
+   * 패널 Close 키 이벤트 핸들러
+   */
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isOpen) {
@@ -47,12 +55,15 @@ const PreviewPanel = (_: Record<string, never>, ref: React.Ref<PreviewPanelHandl
     [isOpen, handleCloseSidePanel]
   );
 
+  /**
+   * 패널 Close 키 이벤트 
+   */
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleKeyDown]);
+  }, []);
 
   /*****************************************************************************
    * RENDER
