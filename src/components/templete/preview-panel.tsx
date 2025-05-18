@@ -63,7 +63,7 @@ const PreviewPanel = (_: Record<string, never>, ref: React.Ref<PreviewPanelHandl
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [handleKeyDown]);
 
   /*****************************************************************************
    * RENDER
