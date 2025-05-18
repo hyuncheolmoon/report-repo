@@ -25,9 +25,11 @@ const SurveyTemplete = () => {
     }
     const newData = addQuestion();
     setTimeout(() => {
-      const el = document.getElementById(`question-${newData.id}`) as HTMLDivElement;
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+      const boxEl = document.getElementById(`question-${newData.id}`);
+      const inputEl = document.getElementById(`question-title-${newData.id}`);
+      if (boxEl && inputEl) {
+        boxEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        setTimeout(() => inputEl.focus(), 100);
       }
     }, 100);
   }, [templete, addQuestion]);

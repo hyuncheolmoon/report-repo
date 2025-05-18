@@ -3,11 +3,12 @@
 import React, { useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 
-import { Button, SelectChangeEvent, Switch } from '@mui/material';
+import { Button, FormControlLabel, IconButton, SelectChangeEvent } from '@mui/material';
+import { Checkbox } from '@/components/atoms';
 import { TextInput, Select } from '@/components/atoms';
 import { QuestionItemBox, QuestionContents, QuestionHeader } from '@/assets/styled/servey';
 
-import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types/survey';
+import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types';
 import { useConfirmDialog } from '@/contexts/confirm-context';
 
 import ModifyOptionItem from './modify-option-item';
@@ -16,7 +17,6 @@ import { palette } from '@/constants';
 import { generateUUID } from '@/utils';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { useTempleteStore } from '@/stores/use-templete-store';
-
 
 import { toast } from '@/utils';
 
@@ -135,8 +135,8 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
       <QuestionHeader>
         <TitleInputBox>
           <TextInput
-            id={`question-title-${question.id}`}
             data-testid={`question-title-${question.id}`}
+            id={`question-title-${question.id}`}
             defaultValue={question.title}
             placeholder="질문"
             fullWidth
@@ -157,16 +157,15 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
       <OptionsWrapper>{RenderTypeItem}</OptionsWrapper>
       <QuestionFooter>
         <RequiredBox>
-          <span>필수</span>
-          <Switch
-            inputProps={{ 'aria-label': 'test-switch' }}
-            checked={question.required}
-            onChange={handleChangeRequired}
+          <FormControlLabel
+            data-testid={`question-required-${question.id}`}
+            control={<Checkbox checked={question.required} onChange={handleChangeRequired} />}
+            label="필수 질문"
+            labelPlacement="end"
           />
-          <input data-testid='test-hidden' type="hidden" value={question.required? 'true': 'false'} />
         </RequiredBox>
         <DeleteBtn data-testid={`question-delete-${question.id}`} onClick={handleDeleteQuestion}>
-          <RiDeleteBinLine />
+          <RiDeleteBinLine fontSize={22} /> <div>삭제</div>
         </DeleteBtn>
       </QuestionFooter>
     </QuestionItemBox>
@@ -195,8 +194,11 @@ const RequiredBox = styled.div`
   align-items: center;
 `;
 const DeleteBtn = styled(Button)`
-  font-size: 18px;
   color: ${palette.red200};
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
 `;
 
 const TitleInputBox = styled.div`

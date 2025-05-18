@@ -1,25 +1,13 @@
-export enum QuestionType {
-    TEXTAREA = 'TEXTAREA',
-    DROPDOWN = 'DROPDOWN',
-    CHECKBOX = 'CHECKBOX',
+import { Question } from './question';
+
+interface BaseDate {
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export enum QuestionTypeLabel {
-    TEXTAREA = '텍스트',
-    DROPDOWN = '드롭박스',
-    CHECKBOX = '체크박스',
-}
-
-export interface OptionItem {
-    id: string;
-    content: string;
-}
-
-export interface Question {
-    id: string;
-    type: QuestionType;
-    title?: string;
-    text?: string;
-    options: OptionItem[];
-    required: boolean;
+export interface Survey extends BaseDate {
+  id: string;
+  subject: string;
+  description: string;
+  questions: Question[];
 }

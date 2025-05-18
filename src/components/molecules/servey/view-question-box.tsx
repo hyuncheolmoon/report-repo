@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { TextInput, Select } from '@/components/atoms';
 import { QuestionItemBox, QuestionContents, QuestionHeader, Required } from '@/assets/styled/servey';
 
-import { Question, QuestionType } from '@/types/survey';
+import { Question, QuestionType } from '@/types';
 
 import ViewOptionItem from './view-option-item';
 

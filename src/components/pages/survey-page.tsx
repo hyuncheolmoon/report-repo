@@ -6,24 +6,25 @@ import styled from '@emotion/styled';
 import { RiDeleteBinLine } from 'react-icons/ri';
 
 import { usePathHandler, useStorageHandler } from '@/hooks';
-import { Templete } from '@/stores';
+import { Survey } from '@/types';
 import { useConfirmDialog } from '@/contexts/confirm-context';
 
 import { Button, debounce, IconButton } from '@mui/material';
 import { RootTable, TableColumn } from '@/components/organisms/table';
 
-import { FullPageLayout, PageContent, PageHeader } from '@/assets/styled';
+import { FullPageLayout, Loading, PageContent, PageHeader } from '@/assets/styled';
 import { palette } from '@/constants';
 import { toast } from '@/utils';
 
 const SurveyPage = () => {
   const router = useRouter();
   const { path } = usePathHandler();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { getServeyList, deleteServey, deleteTempServey } = useStorageHandler();
   const { confirm } = useConfirmDialog();
 
-  const [list, setList] = useState<Templete[]>([]);
-  const [filterList, setFilterList] = useState<Templete[]>([]);
+  const [list, setList] = useState<Survey[]>([]);
+  const [filterList, setFilterList] = useState<Survey[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   /*****************************************************************************
@@ -34,6 +35,7 @@ const SurveyPage = () => {
     const list = getServeyList();
     setList(list);
     setFilterList(list);
+    setIsLoading(false);
     /** 방어 코드 : list페이지 접근시 임시 설문지 삭제 */
     deleteTempServey();
   }, [getServeyList, deleteTempServey]);
@@ -64,7 +66,7 @@ const SurveyPage = () => {
   }, [router, path]);
 
   const handleMoveDetailSurvey = useCallback(
-    (templete: Templete) => {
+    (templete: Survey) => {
       router.push(`${path.main}/${templete.id}`);
     },
     [router, path]
@@ -82,7 +84,7 @@ const SurveyPage = () => {
    * 설문지 삭제
    */
   const handleDeleteSurvey = useCallback(
-    async (event: React.MouseEvent<HTMLButtonElement>, templete: Templete) => {
+    async (event: React.MouseEvent<HTMLButtonElement>, templete: Survey) => {
       event.stopPropagation();
       const isConfirm = await confirm('삭제하시겠습니까?');
       if (!isConfirm) {
@@ -104,7 +106,7 @@ const SurveyPage = () => {
    * 삭제 버튼
    */
   const renderDeleteBtn = useCallback(
-    (templete: Templete) => (
+    (templete: Survey) => (
       <BtnGroup>
         <DeleteBtn data-testid="survey-delete-btn" onClick={(event) => handleDeleteSurvey(event, templete)}>
           <RiDeleteBinLine />
@@ -117,11 +119,11 @@ const SurveyPage = () => {
   /**
    * 테이블 컬럼 설정
    */
-  const columns: TableColumn<Templete>[] = useMemo(
+  const columns: TableColumn<Survey>[] = useMemo(
     () => [
       { key: 'id', title: 'ID' },
       { key: 'subject', title: '제목' },
-      { title: '항목 수', render: (data: Templete) => <span>{data.questions?.length}</span> },
+      { title: '항목 수', render: (data: Survey) => <span>{data.questions?.length}</span> },
       { key: 'createdAt', title: '생성일' },
       { key: 'updatedAt', title: '수정일' },
       { title: '삭졔', render: renderDeleteBtn },
@@ -149,7 +151,7 @@ const SurveyPage = () => {
               ref={searchInputRef}
             />
           </TableHeader>
-          <RootTable columns={columns} data={filterList} onClick={handleMoveDetailSurvey} />
+          {isLoading ? <Loading /> : <RootTable columns={columns} data={filterList} onClick={handleMoveDetailSurvey} />}
         </TableContainer>
       </PageContent>
     </FullPageLayout>

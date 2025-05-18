@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { RiArrowLeftLine } from 'react-icons/ri';
 
 import { usePathHandler, useStorageHandler } from '@/hooks';
-import { Templete } from '@/stores';
+import { Survey } from '@/types';
 
 import { ViewQuestionBox, ViewTitleBox } from '@/components/molecules';
 import { FullPageLayout, PageContent, PageHeader, ContentLayer, SurveyContainer, BackButton } from '@/assets/styled';
@@ -17,7 +17,7 @@ const SurveyPreviewPage = () => {
 
   const { path } = usePathHandler();
 
-  const [templete, setTemplete] = useState<Templete>();
+  const [templete, setTemplete] = useState<Survey | null>(null);
 
   const getData = useCallback(() => {
     const survey = getTempServey();

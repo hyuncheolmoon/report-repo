@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
 
 import { RiArrowLeftLine } from 'react-icons/ri';
+
 import { Button } from '@mui/material';
-import { FullPageLayout, PageContent, PageHeader, BackButton, RightBtnGroup } from '@/assets/styled';
+import { FullPageLayout, PageContent, PageHeader, BackButton, RightBtnGroup, Loading } from '@/assets/styled';
 
 import { usePathHandler } from '@/hooks';
 import useStorageHandler from '@/hooks/use-storage-handler';
@@ -17,19 +18,21 @@ import { SurveyTemplete } from '../templete';
 
 const SurveyCreatePage = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { templete, setTemplete, createTemplete, reset } = useTempleteStore();
   const { postServey, getTempServey, postTempServey } = useStorageHandler();
   const { path } = usePathHandler();
 
   const setInitData = useCallback(() => {
     const temp = getTempServey();
-    console.log('temp', temp);
     // 미리보기 후 복귀했을때 수정본 유지를 위한 코드
     if (temp && !temp.id) {
       setTemplete(temp);
+      setIsLoading(false);
       return;
     }
     createTemplete();
+    setIsLoading(false);
   }, [createTemplete, getTempServey, setTemplete]);
 
   useEffect(() => {
@@ -57,23 +60,21 @@ const SurveyCreatePage = () => {
    * 설문 생성
    */
   const handleCreateSurvey = useCallback(() => {
-    console.log('templete', templete);
-
     if (templete.subject === '') {
-      toast.error('제목을 입력해주세요.');
-      const titleInput = document.getElementsByName('survey-subject');
-      if (titleInput?.[0]) {
-        titleInput[0].focus();
+      toast.error('설문지의 제목을 입력해주세요.');
+      const subjectInput = document.getElementById('survey-subject');
+      if (subjectInput) {
+        subjectInput.focus();
       }
       return;
     }
 
     for (const question of templete.questions) {
       if (question.title === '') {
-        toast.error('질문을 입력해주세요.');
-        const titleInput = document.getElementsByName(`question-title-${question.id}`);
-        if (titleInput?.[0]) {
-          titleInput[0].focus();
+        toast.error('질문의 내용을 입력해주세요.');
+        const titleInput = document.getElementById(`question-title-${question.id}`);
+        if (titleInput) {
+          titleInput.focus();
         }
         return;
       }
@@ -111,18 +112,16 @@ const SurveyCreatePage = () => {
         </BackButton>
 
         <RightBtnGroup>
-          <Button variant="contained" color="primary" onClick={handleMovePreviewPage}>
+          <Button variant="contained" color="primary" onClick={handleMovePreviewPage} disabled={isLoading}>
             미리보기
           </Button>
-          <Button variant="contained" color="primary" onClick={handleCreateSurvey}>
+          <Button variant="contained" color="primary" onClick={handleCreateSurvey} disabled={isLoading}>
             저장
           </Button>
         </RightBtnGroup>
       </PageHeader>
 
-      <PageContent>
-        <SurveyTemplete />
-      </PageContent>
+      <PageContent>{isLoading ? <Loading /> : <SurveyTemplete />}</PageContent>
     </FullPageLayout>
   );
 };

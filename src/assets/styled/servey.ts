@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { palette } from '@/constants';
-import { IconButton, Button } from '@mui/material';
+import { IconButton, Button, CircularProgress } from '@mui/material';
 
 export const QuestionItemBox = styled.div`
   display: flex;
@@ -84,4 +84,12 @@ export const Required = styled.span`
 export const RightBtnGroup = styled.div`
   display: flex;
   gap: 10px;
+`;
+
+
+export const Loading = styled(CircularProgress)`
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModifyQuestionBox from '../modify-question-box';
-import { QuestionType } from '@/types/survey';
+import { QuestionType } from '@/types';
 
 describe('질문 수정 박스 컴포넌트', () => {
   // Test question data

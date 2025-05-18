@@ -9,7 +9,7 @@ import { TextInput } from '@/components/atoms';
 
 import { useTempleteStore } from '@/stores/use-templete-store';
 
-import { QuestionType, OptionItem, Question } from '@/types/survey';
+import { QuestionType, OptionItem, Question } from '@/types';
 import { generateUUID, toast } from '@/utils';
 import { palette } from '@/constants';
 type ModifyOptionItemProps = {

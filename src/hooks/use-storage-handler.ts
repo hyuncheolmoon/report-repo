@@ -2,7 +2,7 @@
 
 import { useMemo, useCallback } from 'react';
 import { storage } from '@/utils';
-import { Templete } from '@/stores/use-templete-store';
+import { Survey } from '@/types';
 
 const TEMPLETE_KEY = 'templete-list';
 const TEMP_KEY = 'temp-templete';
@@ -16,7 +16,7 @@ const useStorageHandler = () => {
     return list || [];
   }, []);
 
-  const _save = useCallback((list: Templete[]) => {
+  const _save = useCallback((list: Survey[]) => {
     storage.set(TEMPLETE_KEY, list);
   }, []);
 
@@ -33,13 +33,13 @@ const useStorageHandler = () => {
   const getServey = useCallback(
     (id: string) => {
       const list = _get();
-      return list.find((item: Templete) => item.id === id);
+      return list.find((item: Survey) => item.id === id);
     },
     [_get]
   );
 
   const postServey = useCallback(
-    (templete: Templete) => {
+    (templete: Survey) => {
       try {
         const list = _get();
         _save([...list, templete]);
@@ -54,7 +54,7 @@ const useStorageHandler = () => {
     (id: string) => {
       try {
         const list = _get();
-        const newList = list.filter((item: Templete) => item.id !== id);
+        const newList = list.filter((item: Survey) => item.id !== id);
         _save(newList);
       } catch (error) {
         console.error(error);
@@ -64,10 +64,10 @@ const useStorageHandler = () => {
   );
 
   const updateServey = useCallback(
-    (templete: Templete) => {
+    (templete: Survey) => {
       try {
         const list = _get();
-        const newList = list.map((item: Templete) => (item.id === templete.id ? templete : item));
+        const newList = list.map((item: Survey) => (item.id === templete.id ? templete : item));
         _save(newList);
       } catch (error) {
         console.error(error);
@@ -79,7 +79,7 @@ const useStorageHandler = () => {
   /******************************************************************************
    * TEMP
    ******************************************************************************/
-  const postTempServey = useCallback((templete: Templete) => {
+  const postTempServey = useCallback((templete: Survey) => {
     storage.set(TEMP_KEY, templete);
   }, []);
 
