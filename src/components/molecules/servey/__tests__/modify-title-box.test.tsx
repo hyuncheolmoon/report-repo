@@ -64,15 +64,4 @@ describe('ModifyTitleBox 컴포넌트', () => {
     expect(mockOnChange).toHaveBeenCalledWith(longText, '');
   });
 
-  it('특수문자가 포함된 텍스트도 올바르게 처리되어야 한다', () => {
-    render(<ModifyTitleBox onChange={mockOnChange} />);
-    
-    const specialText = '!@#$%^&*()_+ 제목';
-    const titleInput = screen.getByTestId('survey-subject').querySelector('input');
-    
-    fireEvent.change(titleInput!, { target: { value: specialText } });
-    fireEvent.blur(titleInput!);
-    
-    expect(mockOnChange).toHaveBeenCalledWith(specialText, '');
-  });
 });

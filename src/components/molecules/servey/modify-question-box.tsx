@@ -4,8 +4,7 @@ import React, { useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 
 import { Button, FormControlLabel, SelectChangeEvent } from '@mui/material';
-import { Checkbox } from '@/components/atoms';
-import { TextInput, Select } from '@/components/atoms';
+import { TextInput, Select, Checkbox } from '@/components/atoms';
 import { QuestionItemBox, QuestionContents, QuestionHeader } from '@/assets/styled/servey';
 
 import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types';
@@ -156,10 +155,15 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
       </QuestionHeader>
       <OptionsWrapper>{RenderTypeItem}</OptionsWrapper>
       <QuestionFooter>
-        <RequiredBox>
+        <RequiredBox data-testid={`question-required-${question.id}`}>
           <FormControlLabel
-            data-testid={`question-required-${question.id}`}
-            control={<Checkbox checked={question.required} onChange={handleChangeRequired} />}
+            control={
+              <Checkbox
+                checked={question.required}
+                onChange={handleChangeRequired}
+                value={question.required ? 'true' : 'false'}
+              />
+            }
             label="필수 질문"
             labelPlacement="end"
           />

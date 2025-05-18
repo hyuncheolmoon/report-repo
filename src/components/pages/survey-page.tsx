@@ -23,6 +23,7 @@ const SurveyPage = () => {
   const { getServeyList, deleteServey, deleteTempServey } = useStorageHandler();
   const { confirm } = useConfirmDialog();
 
+  const [keyword, setKeyword] = useState<string>('');
   const [list, setList] = useState<Survey[]>([]);
   const [filterList, setFilterList] = useState<Survey[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -50,13 +51,21 @@ const SurveyPage = () => {
   /**
    * 키워드 검색을 통한 필터링
    */
+  useEffect(() => {
+    if (!keyword.trim()) {
+      setFilterList(list);
+      return;
+    }
+    const newList = list.filter((item) => item.subject.includes(keyword.trim()));
+    setFilterList(newList);
+  }, [keyword, list]);
+
+  /**
+   * 키워드 검색 입력 시 딜레이
+   */
   const handleChangeKeyword = useCallback(
     debounce((keyword: string) => {
-      if (!searchInputRef.current) {
-        return;
-      }
-      const newList = list.filter((item) => item.subject.includes(keyword));
-      setFilterList(newList);
+      setKeyword(keyword);
     }, 300),
     [list, searchInputRef]
   );

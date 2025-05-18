@@ -82,6 +82,9 @@ const templeteStoreInitializer: StateCreator<TempleteState> = (set, get) => ({
   deleteQuestion: (id: string) => {
     const { templete } = get();
     const newQuestions = templete.questions.filter((q) => q.id !== id);
+    if (newQuestions.length === 0) {
+      return;
+    }
     set({
       templete: {
         ...templete,

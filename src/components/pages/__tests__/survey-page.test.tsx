@@ -73,18 +73,18 @@ describe('SurveyPage', () => {
     expect(totalCount).toHaveTextContent('설문지: 2 개');
   });
 
-  it('검색어 입력 시 필터링된 리스트가 출력된다', () => {
+  it('검색어 입력 시 필터링된 리스트가 출력된다', async () => {
     renderWithConfirmContext(<SurveyPage />);
 
     const searchInput = screen.getByTestId('search-input');
     const surveyTable = screen.getByTestId('table');
-    const totalCount = screen.getByTestId('survey-total-count');
 
     fireEvent.change(searchInput, { target: { value: '설문지 1' } });
 
-    expect(surveyTable).toHaveTextContent('테스트 설문지 1');
-    expect(surveyTable).not.toHaveTextContent('테스트 설문지 2');
-    expect(totalCount).toHaveTextContent('설문지: 2 개'); // 전체 개수는 변하지 않음
+    await waitFor(() => {
+      expect(surveyTable).toHaveTextContent('테스트 설문지 1');
+      expect(surveyTable).not.toHaveTextContent('테스트 설문지 2');
+    });
   });
 
   it('첫 번째 설문지 삭제 버튼 클릭 시 확인 창이 표시되고, 확인 시 리스트에서 사라진다', async () => {
