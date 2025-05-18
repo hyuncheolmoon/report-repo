@@ -232,6 +232,7 @@ const TableHeader = styled.div`
   width: 100%;
   padding: 8px;
   height: auto;
+  flex-wrap: wrap;
 `;
 
 const TableContainer = styled.div`

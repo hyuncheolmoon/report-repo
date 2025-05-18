@@ -55,7 +55,11 @@ const useStorageHandler = () => {
       try {
         const list = _get();
         const newList = list.filter((item: Survey) => item.id !== id);
-        _save(newList);
+        if (newList.length > 0) {
+          _save(newList);
+        } else {
+          storage.del(TEMPLETE_KEY);
+        }
       } catch (error) {
         console.error(error);
       }

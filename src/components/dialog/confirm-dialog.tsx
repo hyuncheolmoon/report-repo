@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Dialog, Button } from '@mui/material';
 import styled from '@emotion/styled';
 import { palette } from '@/constants';
@@ -23,6 +23,15 @@ const ConfirmDialog = ({ open, title = '', message, onConfirm }: ConfirmDialogPr
     onConfirm(false);
   }, [onConfirm]);
 
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        const confirmBtn = document.getElementById('confirm-btn');
+        confirmBtn?.focus();
+      }, 100);
+    }
+  }, [open]);
+
   /*****************************************************************************
    * RENDER
    *****************************************************************************/
@@ -35,7 +44,7 @@ const ConfirmDialog = ({ open, title = '', message, onConfirm }: ConfirmDialogPr
         <CancelBtn data-testid="cancel-btn" onClick={handleCancel}>
           취소
         </CancelBtn>
-        <ConfirmBtn data-testid="confirm-btn" onClick={handleConfirm} autoFocus>
+        <ConfirmBtn id="confirm-btn" data-testid="confirm-btn" onClick={handleConfirm} autoFocus>
           확인
         </ConfirmBtn>
       </FooterBtnGroup>
