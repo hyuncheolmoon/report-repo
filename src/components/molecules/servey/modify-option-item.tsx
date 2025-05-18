@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { RiCheckboxBlankCircleLine, RiCloseCircleLine } from 'react-icons/ri';
 
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { TextInput } from '@/components/atoms';
 
 import { useTempleteStore } from '@/stores/use-templete-store';
@@ -71,18 +71,18 @@ const ModifyOptionItem = ({ question }: ModifyOptionItemProps) => {
           {question.type === QuestionType.CHECKBOX && <RiCheckboxBlankCircleLine />}
           {question.type === QuestionType.DROPDOWN && index + 1}
         </ItemDivison>
-        <ItemText>
+        <ItemContent>
           <TextInput
             defaultValue={item.content}
             fullWidth
             placeholder="내용을 입력하세요"
-            variant="filled"
+            variant="outlined"
             onBlur={(event) => handleChangeContent(event as React.FocusEvent<HTMLInputElement>, item.id, index)}
           />
           <DeleteBtn onClick={() => handleRemoveItem(item.id)}>
             <RiCloseCircleLine />
           </DeleteBtn>
-        </ItemText>
+        </ItemContent>
       </ListItem>
     ),
     [question, handleChangeContent, handleRemoveItem]
@@ -111,33 +111,39 @@ const ItemDivison = styled.div`
   padding: 20px;
 `;
 
-const DeleteBtn = styled(Button)`
-  font-size: 18px;
+const DeleteBtn = styled(IconButton)`
+  font-size: 20px;
   color: ${palette.red200};
+  height: fit-content;
 `;
-const ItemText = styled.div`
+const ItemContent = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  gap: 10px;
+  align-items: center;
 `;
 
 const ListItem = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
+  width: 100%;
 `;
 
 const ItemsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 `;
 
 const AddBtnbox = styled.div`
   text-align: left;
+  margin-left: 52px;
 `;
 
 const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 `;

@@ -17,7 +17,7 @@ const NavigationBar = () => {
   return (
     <NavbarContainer>
       <LinkContainer>
-        <Division>MAIN</Division>
+        <Division>SURVEY</Division>
         <NavList>
           {menuList.map(({ href, label }, idx) => (
             <LinkItem key={`nav-item-${idx}`} href={href} active={'true'}>

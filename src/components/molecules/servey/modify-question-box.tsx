@@ -3,8 +3,8 @@
 import React, { useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 
-import { Button, FormControlLabel, SelectChangeEvent } from '@mui/material';
-import { TextInput, Select, Checkbox } from '@/components/atoms';
+import { Button, SelectChangeEvent, Switch } from '@mui/material';
+import { TextInput, Select } from '@/components/atoms';
 import { QuestionItemBox, QuestionContents, QuestionHeader } from '@/assets/styled/servey';
 
 import { Question, QuestionType, QuestionTypeLabel, OptionItem } from '@/types';
@@ -155,18 +155,9 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
       </QuestionHeader>
       <OptionsWrapper>{RenderTypeItem}</OptionsWrapper>
       <QuestionFooter>
-        <RequiredBox data-testid={`question-required-${question.id}`}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={question.required}
-                onChange={handleChangeRequired}
-                value={question.required ? 'true' : 'false'}
-              />
-            }
-            label="필수 질문"
-            labelPlacement="end"
-          />
+        <RequiredBox>
+          <div>필수</div>
+          <Switch checked={question.required} onChange={handleChangeRequired} />
         </RequiredBox>
         <DeleteBtn data-testid={`question-delete-${question.id}`} onClick={handleDeleteQuestion}>
           <RiDeleteBinLine fontSize={22} /> <div>삭제</div>
@@ -179,7 +170,7 @@ const QuestionBox = ({ question }: QuestionBoxProps) => {
 export default QuestionBox;
 
 const OptionsWrapper = styled.div`
-  padding: 12px 0;
+  padding: 12px 0 0;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -196,6 +187,7 @@ const QuestionFooter = styled.div`
 const RequiredBox = styled.div`
   display: flex;
   align-items: center;
+  font-size: 14px;
 `;
 const DeleteBtn = styled(Button)`
   color: ${palette.red200};

@@ -5,8 +5,8 @@ import { IconButton, CircularProgress } from '@mui/material';
 export const QuestionItemBox = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px 24px 12px;
+  gap: 4px;
+  padding: 24px 24px 18px;
   background-color: ${palette.white};
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
@@ -22,7 +22,7 @@ export const QuestionHeader = styled.div`
 export const QuestionContents = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 `;
 
 export const FloatingArea = styled.div`
