@@ -37,7 +37,7 @@ const SurveyCreatePage = () => {
 
   useEffect(() => {
     setInitData();
-  }, [setInitData]);
+  }, []);
 
   /**
    * 템플릿 변경 감지 후 임시저지

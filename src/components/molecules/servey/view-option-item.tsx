@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 import { Checkbox, FormControlLabel } from '@mui/material';
 
-import { Question } from '@/types/survey';
+import { OptionItem, Question } from '@/types';
 
 type ViewOptionItemProps = {
   question: Question;
@@ -19,7 +19,7 @@ const ViewOptionItem = ({ question }: ViewOptionItemProps) => {
   return (
     <ListContainer>
       <ItemsList>
-        {question.options.map((item) => (
+        {question.options.map((item: OptionItem) => (
           <ListItem key={item.id}>
             <FormControlLabel control={<Checkbox name={item.id} />} label={item.content} />
           </ListItem>

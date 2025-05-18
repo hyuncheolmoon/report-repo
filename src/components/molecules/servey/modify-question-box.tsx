@@ -3,7 +3,7 @@
 import React, { useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 
-import { Button, FormControlLabel, IconButton, SelectChangeEvent } from '@mui/material';
+import { Button, FormControlLabel, SelectChangeEvent } from '@mui/material';
 import { Checkbox } from '@/components/atoms';
 import { TextInput, Select } from '@/components/atoms';
 import { QuestionItemBox, QuestionContents, QuestionHeader } from '@/assets/styled/servey';
