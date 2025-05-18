@@ -4,40 +4,28 @@ import userEvent from '@testing-library/user-event';
 import ModifyQuestionBox from '../modify-question-box';
 import { QuestionType } from '@/types';
 
-// mock 함수 선언을 jest.mock 위에 위치시킴
 const mockConfirm = jest.fn(() => Promise.resolve(true));
 const mockDeleteQuestion = jest.fn();
+
+jest.mock('@/utils', () => ({
+  toast: {
+    error: jest.fn(),
+  },
+}));
 
 jest.mock('@/contexts/confirm-context', () => ({
   ConfirmProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useConfirmDialog: () => ({
-    confirm: mockConfirm
-  })
+    confirm: mockConfirm,
+  }),
 }));
 
 jest.mock('@/stores/use-templete-store', () => ({
-  useTempleteStore: jest.fn(() => ({
-    templete: {
-      questions: [{
-        id: '1',
-        title: '테스트 질문',
-        type: QuestionType.TEXTAREA,
-        required: false,
-        options: [{ id: '1', content: '옵션 1' }],
-      }]
-    },
-    deleteQuestion: mockDeleteQuestion
-  }))
+  useTempleteStore: jest.fn(),
 }));
 
-jest.mock('@/utils', () => ({
-  toast: {
-    error: jest.fn()
-  }
-}));
-
-describe('질문 수정 박스 컴포넌트', () => {
-  const testQuestion1 = {
+describe('질문 추가 및 삭제(ModifyQuestionBox)', () => {
+  const defaultQuestion = {
     id: '1',
     title: '테스트 질문',
     type: QuestionType.TEXTAREA,
@@ -45,82 +33,101 @@ describe('질문 수정 박스 컴포넌트', () => {
     options: [{ id: '1', content: '옵션 1' }],
   };
 
-  const renderWithContext = (component: React.ReactNode) => {
-    return render(component);
+  const renderComponent = (question = defaultQuestion) => {
+    return render(<ModifyQuestionBox question={question} />);
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    const { useTempleteStore } = require('@/stores/use-templete-store');
+    useTempleteStore.mockReturnValue({
+      templete: {
+        questions: [defaultQuestion],
+      },
+      deleteQuestion: mockDeleteQuestion,
+      changeQuestion: jest.fn(),
+    });
   });
 
-  it('질문 제목 입력 필드가 정상적으로 렌더링되어야 함', () => {
-    renderWithContext(<ModifyQuestionBox question={testQuestion1} />);
-    const titleInput = screen.getByTestId('question-title-1').querySelector('input');
+  describe('렌더링', () => {
+    it('기본 입력 폼 출력', () => {
+      renderComponent();
 
-    expect(titleInput).toBeInTheDocument();
-    expect(titleInput).toHaveValue('테스트 질문');
+      expect(screen.getByTestId('question-title-1')).toBeInTheDocument();
+      expect(screen.getByTestId('question-delete-1')).toBeInTheDocument();
+    });
+
+    it('데이터 출력', () => {
+      renderComponent();
+      const titleInput = screen.getByTestId('question-title-1').querySelector('input');
+
+      expect(titleInput).toHaveValue('테스트 질문');
+    });
   });
 
-  it('질문 제목을 수정하면 새로운 값이 반영되어야 함', async () => {
-    renderWithContext(<ModifyQuestionBox question={testQuestion1} />);
+  it('내용 변경', async () => {
+    renderComponent();
     const titleInput = screen.getByTestId('question-title-1').querySelector('input');
 
-    if (!titleInput) {
-      throw new Error('Title input element not found');
-    }
-
-    // 기존 값 확인
-    expect(titleInput).toHaveValue('테스트 질문');
+    if (!titleInput) throw new Error('Title input not found');
 
     await userEvent.clear(titleInput);
-    await userEvent.type(titleInput, '수정된 질문 제목');
+    await userEvent.type(titleInput, '새로운 질문 제목');
 
-    // 새로운 값이 반영되었는지 확인
-    expect(titleInput).toHaveValue('수정된 질문 제목');
+    expect(titleInput).toHaveValue('새로운 질문 제목');
   });
 
-  it('삭제 버튼 클릭 시 확인 창이 표시되고 확인 시 질문이 삭제되어야 함', async () => {
-    // questions 배열을 2개로 설정
-    const testQuestion2 = {
-      id: '2',
-      title: '테스트 질문2',
-      type: QuestionType.TEXTAREA,
-      required: false,
-      options: [{ id: '1', content: '옵션 1' }],
-    };
-    const { useTempleteStore } = require('@/stores/use-templete-store');
-    useTempleteStore.mockReturnValue({
-      templete: {
-        questions: [testQuestion1, testQuestion2]
-      },
-      deleteQuestion: mockDeleteQuestion
+  describe('질문 삭제', () => {
+    it('삭제', async () => {
+      const { useTempleteStore } = require('@/stores/use-templete-store');
+      useTempleteStore.mockReturnValue({
+        templete: {
+          questions: [defaultQuestion, { ...defaultQuestion, id: '2', title: '두 번째 질문' }],
+        },
+        deleteQuestion: mockDeleteQuestion,
+        changeQuestion: jest.fn(),
+      });
+
+      renderComponent();
+      const deleteButton = screen.getByTestId('question-delete-1');
+
+      await userEvent.click(deleteButton);
+
+      expect(mockConfirm).toHaveBeenCalledWith('삭제하시겠습니까?');
+      await waitFor(() => {
+        expect(mockDeleteQuestion).toHaveBeenCalledWith('1');
+      });
     });
 
-    renderWithContext(<ModifyQuestionBox question={testQuestion1} />);
-    
-    const deleteButton = screen.getByTestId('question-delete-1');
-    expect(deleteButton).toBeInTheDocument();
+    it('삭제 불가', async () => {
+      renderComponent();
+      const deleteButton = screen.getByTestId('question-delete-1');
 
-    await userEvent.click(deleteButton);
-    expect(mockConfirm).toHaveBeenCalledWith('삭제하시겠습니까?');
-    
-  });
+      await userEvent.click(deleteButton);
 
-  it('질문이 1개일 때는 삭제할 수 없어야 함', async () => {
-    const { useTempleteStore } = require('@/stores/use-templete-store');
-    useTempleteStore.mockReturnValue({
-      templete: {
-        questions: [testQuestion1]
-      },
-      deleteQuestion: mockDeleteQuestion
+      const { toast } = require('@/utils');
+      expect(toast.error).toHaveBeenCalledWith('한가지 이상의 질문이 필요합니다.');
+      expect(mockDeleteQuestion).not.toHaveBeenCalled();
     });
 
-    renderWithContext(<ModifyQuestionBox question={testQuestion1} />);
-    
-    const deleteButton = screen.getByTestId('question-delete-1');
-    await userEvent.click(deleteButton);
+    it('삭제 취소', async () => {
+      mockConfirm.mockResolvedValueOnce(false);
+      const { useTempleteStore } = require('@/stores/use-templete-store');
+      useTempleteStore.mockReturnValue({
+        templete: {
+          questions: [defaultQuestion, { ...defaultQuestion, id: '2', title: '두 번째 질문' }],
+        },
+        deleteQuestion: mockDeleteQuestion,
+        changeQuestion: jest.fn(),
+      });
 
-    const { toast } = require('@/utils');
-    expect(toast.error).toHaveBeenCalledWith('한가지 이상의 질문이 필요합니다.');
+      renderComponent();
+      const deleteButton = screen.getByTestId('question-delete-1');
+
+      await userEvent.click(deleteButton);
+
+      expect(mockConfirm).toHaveBeenCalledWith('삭제하시겠습니까?');
+      expect(mockDeleteQuestion).not.toHaveBeenCalled();
+    });
   });
 });

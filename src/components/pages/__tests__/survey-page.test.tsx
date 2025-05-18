@@ -61,8 +61,8 @@ const renderWithConfirmContext = (ui: React.ReactElement) => {
   return render(<ConfirmProvider>{ui}</ConfirmProvider>);
 };
 
-describe('SurveyPage', () => {
-  it('리스트가 정상적으로 출력된다', () => {
+describe('설문지 관리 화면(SurveyPage)', () => {
+  it('리스트가 정상적으로 출력', () => {
     renderWithConfirmContext(<SurveyPage />);
 
     const surveyTable = screen.getByTestId('table');
@@ -73,7 +73,7 @@ describe('SurveyPage', () => {
     expect(totalCount).toHaveTextContent('설문지: 2 개');
   });
 
-  it('검색어 입력 시 필터링된 리스트가 출력된다', async () => {
+  it('검색시 정상적으로 필터링', async () => {
     renderWithConfirmContext(<SurveyPage />);
 
     const searchInput = screen.getByTestId('search-input');
@@ -87,7 +87,7 @@ describe('SurveyPage', () => {
     });
   });
 
-  it('첫 번째 설문지 삭제 버튼 클릭 시 확인 창이 표시되고, 확인 시 리스트에서 사라진다', async () => {
+  it('설문지 삭제 기능', async () => {
     renderWithConfirmContext(<SurveyPage />);
 
     const deleteButtons = screen.getAllByTestId('survey-delete-btn');
